@@ -1,8 +1,3 @@
-
-Here’s the complete and uninterrupted README.md:
-
-markdown
-Copy code
 # Express Backend with TypeScript
 
 This project is a basic Express.js backend application built with TypeScript.
