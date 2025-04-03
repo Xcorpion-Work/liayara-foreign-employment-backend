@@ -1,13 +1,15 @@
 {
-  "name": "express-backend-ts",
+  "name": "liayara-forieng-employment-backend",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./dist/server.js",
+    "start": "cross-env NODE_ENV=prod node ./dist/server.js",
     "build": "tsc",
-    "dev": "nodemon ./src/server.ts"
+    "dev": "cross-env NODE_ENV=dev nodemon ./src/server.ts",
+    "qa": "cross-env NODE_ENV=qa nodemon ./src/server.ts",
+    "lint": "eslint"
   },
   "keywords": [],
   "author": "",
@@ -22,10 +24,10 @@
     "prettier": "3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.16.0"
+    "typescript-eslint": "^8.16.0",
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
-    "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
@@ -33,6 +35,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.3"
+    "mongoose": "^8.8.3",
+    "nodemailer": "^6.10.0",
+    "uuid": "^11.0.3"
   }
 }
