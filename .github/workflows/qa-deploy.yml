@@ -1,4 +1,4 @@
-name: Deploy Liyara Foreign Employment QA Backend to Droplet
+name: 🚀 Deploy Liyara Foreign Employment QA Backend to Droplet
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "📦 Installing dependencies..."
           npm install --force
-          echo "🛠️ Building project..."
+          echo "🛠️ Building the project..."
           npm run build
           echo "🗜️ Compressing build output..."
           tar -czf backend-dist.tar.gz dist
@@ -59,6 +59,9 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
+            echo "🔄 Pulling latest code from repository..."
+            git pull
+
             echo "🧹 Cleaning old dist..."
             rm -rf dist
 
@@ -67,7 +70,7 @@ jobs:
 
             echo "🚀 Restarting backend service with PM2..."
             pm2 delete "lfe-server-qa" || echo "📝 PM2 process not found, starting fresh."
-            pm2 start npm --name "lfe-server-qa" -- start
+            pm2 start npm --name "lfe-server-qa" -- run qa
             pm2 save
 
             echo "🧹 Cleaning up archive..."
