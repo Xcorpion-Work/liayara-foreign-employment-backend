@@ -42,7 +42,7 @@ jobs:
       - name: 📂 Copy Backend Build to VPS
         run: |
           echo "🚚 Copying build to the server..."
-          scp -o StrictHostKeyChecking=no backend-dist.tar.gz ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}:/var/www/qa/qa-wd-server/
+          scp -o StrictHostKeyChecking=no backend-dist.tar.gz ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}:/var/www/liyara-foreign-emplyment/qa/backend
 
       # ✅ Deploy on VPS
       - name: 🚀 Deploy Backend to VPS
@@ -52,7 +52,7 @@ jobs:
             set -e
 
             echo "📁 Changing directory..."
-            cd /var/www/qa/qa-wd-server
+            cd /var/www/liyara-foreign-emplyment/qa/backend
 
             echo "🧩 Loading NVM..."
             export NVM_DIR="$HOME/.nvm"
