@@ -65,8 +65,9 @@ jobs:
             echo "📦 Extracting new build..."
             tar -xzf backend-dist.tar.gz
 
-            echo "🔄 Restarting backend service with PM2..."
-            pm2 restart "lfe-server-qa" --update-env || pm2 start npm --name "lfe-server-qa" -- start
+            echo "🚀 Restarting backend service with PM2..."
+            pm2 delete "lfe-server-qa" || echo "📝 PM2 process not found, starting fresh."
+            pm2 start npm --name "lfe-server-qa" -- start
             pm2 save
 
             echo "🧹 Cleaning up archive..."
