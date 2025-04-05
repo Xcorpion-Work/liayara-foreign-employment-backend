@@ -3,7 +3,7 @@ name: 🚀 Deploy Liyara Foreign Employment Backend to Droplet
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   deploy:
