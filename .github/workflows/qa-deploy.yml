@@ -52,7 +52,7 @@ jobs:
             set -e
 
             echo "📁 Changing directory..."
-            cd /var/www/liyara-foreign-employment/qa/backend
+            cd /var/www/liyara-foreign-emplyment/qa/backend
 
             echo "🧹 Cleaning old dist..."
             rm -rf dist
