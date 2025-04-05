@@ -29,8 +29,8 @@ jobs:
           npm install --force
           echo "🛠️ Building the project..."
           npm run build
-          echo "🗜️ Compressing build output..."
-          tar -czf backend-dist.tar.gz dist
+          echo "🗜️ Compressing full backend project..."
+          tar -czf backend-dist.tar.gz package.json package-lock.json dist
 
       # ✅ Set up SSH agent
       - name: 🔑 Set up SSH agent
@@ -38,7 +38,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PRIVATE_KEY }}
 
-      # ✅ Copy dist to the VPS
+      # ✅ Copy build package to the VPS
       - name: 📂 Copy Backend Build to VPS
         run: |
           echo "🚚 Copying build to the server..."
@@ -63,10 +63,13 @@ jobs:
             git pull
 
             echo "🧹 Cleaning old dist..."
-            rm -rf dist
+            rm -rf dist node_modules
 
             echo "📦 Extracting new build..."
             tar -xzf backend-dist.tar.gz
+
+            echo "📦 Installing production dependencies..."
+            npm ci --only=production
 
             echo "🚀 Restarting backend service with PM2..."
             pm2 delete "lfe-server-qa" || echo "📝 PM2 process not found, starting fresh."
