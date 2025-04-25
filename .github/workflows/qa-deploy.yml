@@ -60,8 +60,8 @@ jobs:
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
             echo "🔄 Pulling latest code from repository..."
-            git pull
             git stash
+            git pull
 
             echo "🧹 Cleaning old dist..."
             rm -rf dist node_modules
