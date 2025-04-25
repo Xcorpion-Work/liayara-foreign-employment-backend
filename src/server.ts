@@ -7,8 +7,8 @@ import packageInfo from "../package.json";
 import cors from "cors";
 import startup from "./utils/startup";
 import { getLocalIPAddress } from "./utils/localIpAddress";
-import connectDB from "./repository";
-import routes from "./router";
+import connectDB from "./repositories";
+import routes from "./routes";
 
 // Load the correct environment file BEFORE anything else
 const env = process.env.NODE_ENV ?? "dev";
@@ -31,7 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Main route
 app.get("/", (req: Request, res: Response) => {
-    res.send(`${packageInfo.name} server (${process.env.NODE_ENV}) v${packageInfo.version} running`);
+    res.send(
+        `${packageInfo.name} server (${process.env.NODE_ENV}) v${packageInfo.version} running`
+    );
 });
 
 app.use("/api/v1", routes);
