@@ -61,6 +61,7 @@ jobs:
 
             echo "🔄 Pulling latest code from repository..."
             git pull
+            git stash
 
             echo "🧹 Cleaning old dist..."
             rm -rf dist node_modules
