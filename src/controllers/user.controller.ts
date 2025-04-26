@@ -5,6 +5,8 @@ import {
     confirmLoginService,
     createUserService,
     findAllUsersService,
+    forgotPasswordService,
+    loginByForgotPasswordService,
     tokenRefreshService,
     userLoginService,
 } from "../services/user.service";
@@ -33,20 +35,65 @@ export const signupController = async (
     }
 };
 
-export const loginService = async (
+export const loginController = async (
     req: IRequest,
     res: IResponse
 ): Promise<any> => {
     try {
         const body = req.body;
         const response = await userLoginService(body);
-        return sendResponse(res, 200, "User login successful", response);
+        return sendResponse(res, 200, messages.USER_LOGIN_SUCCESS, response);
     } catch (error: any) {
         console.error(error.message);
         return sendResponse(
             res,
             500,
-            "Internal server error",
+            messages.USER_LOGIN_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const loginByForgotPasswordController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const body = req.body;
+        const response = await loginByForgotPasswordService(body);
+        return sendResponse(res, 200, messages.USER_LOGIN_SUCCESS, response);
+    } catch (error: any) {
+        console.error(error.message);
+        return sendResponse(
+            res,
+            500,
+            messages.USER_LOGIN_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const forgotPasswordController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { email } = req.body;
+        const response = await forgotPasswordService(email);
+        return sendResponse(
+            res,
+            200,
+            messages.FORGOT_PASSWORD_SUBMIT_SUCCESS,
+            response
+        );
+    } catch (error: any) {
+        console.error(error.message);
+        return sendResponse(
+            res,
+            500,
+            messages.FORGOT_PASSWORD_SUBMIT_FAILED,
             null,
             error.message
         );
@@ -60,13 +107,13 @@ export const confirmLoginController = async (
     try {
         const { user } = req;
         const response = await confirmLoginService(user);
-        return sendResponse(res, 200, "Confirm login successful", response);
+        return sendResponse(res, 200, messages.LOGIN_CONFIRM_SUCCESS, response);
     } catch (error: any) {
         console.error(error.message);
         return sendResponse(
             res,
             401,
-            "Internal server error",
+            messages.LOGIN_CONFIRM_FAILED,
             null,
             error.message
         );
@@ -80,13 +127,18 @@ export const tokenRefreshController = async (
     try {
         const body = req.body;
         const payload = await tokenRefreshService(body);
-        return sendResponse(res, 200, "Token refreshed successfully", payload);
+        return sendResponse(
+            res,
+            200,
+            messages.TOKEN_REFRESHED_SUCCESS,
+            payload
+        );
     } catch (error: any) {
         console.error(error);
         return sendResponse(
             res,
             500,
-            "Token refreshed failed",
+            messages.TOKEN_REFRESHED_FAILED,
             null,
             error.message
         );
@@ -100,12 +152,17 @@ export const changePasswordController = async (
     try {
         const { body, user } = req;
         const payload = await changePasswordService(body, user);
-        return sendResponse(res, 200, "Password changed successfully", payload);
+        return sendResponse(
+            res,
+            200,
+            messages.CHANGE_PASSWORD_SUCCESS,
+            payload
+        );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            "Password changed failed",
+            messages.CHANGE_PASSWORD_FAILED,
             null,
             error.message
         );
@@ -118,12 +175,12 @@ export const getAllUsersController = async (
 ): Promise<any> => {
     try {
         const payload = await findAllUsersService({});
-        return sendResponse(res, 200, "Password changed successfully", payload);
+        return sendResponse(res, 200, messages.USERS_FETCH_SUCCESS, payload);
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            "Get all users failed",
+            messages.USERS_FETCH_FAILED,
             null,
             error.message
         );
@@ -141,14 +198,14 @@ export const userStatusChangeController = async (
         return sendResponse(
             res,
             200,
-            "User status changed successfully",
+            messages.USER_STATUS_CHANGE_SUCCESS,
             response
         );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            "Change user status failed",
+            messages.USER_STATUS_CHANGE_FAILED,
             null,
             error.message
         );

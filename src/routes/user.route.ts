@@ -2,8 +2,10 @@ import { Router } from "express";
 import {
     changePasswordController,
     confirmLoginController,
+    forgotPasswordController,
     getAllUsersController,
-    loginService,
+    loginByForgotPasswordController,
+    loginController,
     signupController,
     tokenRefreshController,
     userStatusChangeController,
@@ -14,7 +16,9 @@ const userRoute = Router();
 
 userRoute.post("/signup", signupController);
 userRoute.post("/super-admin-register", signupController);
-userRoute.post("/login", loginService);
+userRoute.post("/login", loginController);
+userRoute.post("/login-by-forgot-password", loginByForgotPasswordController);
+userRoute.post("/forgot-password", forgotPasswordController);
 userRoute.get("/confirm-login", authMiddleware(), confirmLoginController);
 userRoute.post("/token-refresh", tokenRefreshController);
 userRoute.post("/change-password", authMiddleware(), changePasswordController);
