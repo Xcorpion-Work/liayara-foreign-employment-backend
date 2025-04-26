@@ -6,9 +6,11 @@ import {
     updateUserRepo,
 } from "../repositories/user.repository";
 import { v4 as uuid } from "uuid";
-import { ERROR_MESSAGES } from "../constants/errors";
+import { errors } from "../constants/errors";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "./email.service";
+import { EMAIL_TYPES } from "../helpers/emailHandler";
 
 export const createUserService = async (data: any) => {
     try {
@@ -19,7 +21,7 @@ export const createUserService = async (data: any) => {
             nic
         );
         if (isExistingUser.length > 0) {
-            throw new Error(ERROR_MESSAGES.USER_IS_ALREADY_EXIST);
+            throw new Error(errors.USER_IS_ALREADY_EXIST);
         }
         if (!data.password) {
             data.password = generateRandomPassword();
@@ -101,7 +103,41 @@ export const userLoginService = async (data: any) => {
         }
 
         if (!user.status) {
-            throw new Error(ERROR_MESSAGES.USER_DEACTIVATED);
+            throw new Error(errors.USER_DEACTIVATED);
+        }
+
+        const payload: any = {
+            accessToken: await generateAccessToken(user),
+            refreshToken: await generateRefreshToken(user),
+        };
+        return payload;
+    } catch (e: any) {
+        console.error(e.message);
+        throw e;
+    }
+};
+
+export const loginByForgotPasswordService = async (data: any) => {
+    try {
+        const { uuid, recoveryCode } = data;
+        if (!uuid) {
+            throw new Error(errors.UUID_REQUIRED_FOR_PASSWORD_FORGOT_USERS);
+        }
+
+        const user = await findUserByUuidService(uuid);
+        if (!user) {
+            throw new Error("user not found");
+        }
+
+        const newRecoveryCode = await generateRecoveryCode();
+        await updateUserRepo({ uuid: uuid }, { recoveryCode: newRecoveryCode });
+
+        if (recoveryCode !== user.recoveryCode) {
+            throw new Error(errors.RECOVERY_CODE_IS_NOT_VALID);
+        }
+
+        if (!user.status) {
+            throw new Error(errors.USER_DEACTIVATED);
         }
 
         const payload: any = {
@@ -209,6 +245,19 @@ export const findAllUsersService = async (data: any) => {
 export const changeUserStatusService = async (id: any, data: any) => {
     try {
         return await updateUserRepo({ _id: id }, data);
+    } catch (e: any) {
+        console.error(e.message);
+        throw e;
+    }
+};
+
+export const forgotPasswordService = async (emial: string) => {
+    try {
+        const user = await findUserRepo({ email: emial });
+        if (!user) {
+            throw new Error(errors.USER_CANNOT_BE_FOUND);
+        }
+        return await sendEmail(EMAIL_TYPES.FORGOT_PASSWORD, user.email, user);
     } catch (e: any) {
         console.error(e.message);
         throw e;
