@@ -41,7 +41,7 @@ export const sendEmail = async (type: any, to: any, data: any) => {
                 },
                 {
                     filename: "xcorpion.png",
-                    path: "https://firebasestorage.googleapis.com/v0/b/wijekoon-distributors.appspot.com/o/wd-app%2Flogo.png?alt=media&token=25e31025-b72e-4f58-9810-6d8c56e68982",
+                    path: "https://firebasestorage.googleapis.com/v0/b/wijekoon-distributors.appspot.com/o/lfe%2Fxcorpion.png?alt=media&token=c95e036b-8af5-4815-b18f-44ba11a408ec",
                     cid: "developer-logo", // Match this in <img src="cid:developer-logo">
                 },
             ],
