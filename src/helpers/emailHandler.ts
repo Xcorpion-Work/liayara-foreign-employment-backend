@@ -37,6 +37,7 @@ export const createEmailBody = async (type: string, data: any) => {
         const supportEmail =
             process.env.SUPPORT_EMAIL || "support@xcorpion.xyz";
         if (type === EMAIL_TYPES.ADD_USER) {
+            const role = await rolePreview(data.role);
             return `
             ${getHeader("Welcome to Liyara Foreign Employment")}
             <tr>
@@ -47,7 +48,7 @@ export const createEmailBody = async (type: string, data: any) => {
                     <p>Here is your login details</p>
                     <p>Email: ${data.email}</p>
                     <p>Phone: ${data.phone}</p>
-                    <p>Role: ${rolePreview(data.role)}</p>
+                    <p>Role: ${role}</p>
                     <p>Password: ${data.password}</p>
                     <br>
                     <p>Please change your password immediately. Click here to <a href="${loginUrl}" style="color: #1a73e8;">login</a>.</p>

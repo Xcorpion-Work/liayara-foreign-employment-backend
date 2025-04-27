@@ -11,6 +11,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "./email.service";
 import { EMAIL_TYPES } from "../helpers/emailHandler";
+import { findPermissionsRepo } from "../repositories/permission.repository";
+import { createRoleRepo } from "../repositories/role.repository";
+import mongoose from "mongoose";
+import ObjectId = mongoose.Types.ObjectId;
 
 export const createUserService = async (data: any) => {
     try {
@@ -31,10 +35,28 @@ export const createUserService = async (data: any) => {
         data.recoveryCode = await generateRecoveryCode();
         data.uuid = uuid();
         data.status = true;
+        data.role = data.isSuperAdmin
+            ? await createSuperAdminRole()
+            : data.role;
         const newUser = await createUserRepo(data);
         return { ...newUser.toObject(), mailPw };
     } catch (e: any) {
         console.error(e.message);
+        throw e;
+    }
+};
+
+export const createSuperAdminRole = async () => {
+    try {
+        const permissions = await findPermissionsRepo({});
+        const allPermissionIds = permissions.map((p) => p._id);
+        const superAdmin = await createRoleRepo({
+            name: "Super Admin",
+            permissions: allPermissionIds,
+        });
+        return new ObjectId(superAdmin._id);
+    } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -165,7 +187,7 @@ const generateAccessToken = async (user: any) => {
     return jwt.sign(
         { username: user.username, uuid: user.uuid }, // Payload
         ACCESS_TOKEN_SECRET, // Secret key
-        { expiresIn: "1h" } // Options
+        { expiresIn: "30m" } // Options
     );
 };
 

@@ -4,13 +4,13 @@ export const sendResponse = (
     res: Response,
     statusCode: number,
     message: string,
-    result: any = null,
+    response: any = null,
     error: any = null
 ): Response => {
     return res.status(statusCode).json({
         code: statusCode,
         message,
-        result,
+        response,
         error,
     });
 };

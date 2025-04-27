@@ -1,25 +1,25 @@
-import mongoose, { Document, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
 export interface IRole extends Document {
-    uuid: string;
     name: string;
-    description: string;
+    permissions: any;
     status: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const RoleSchema: Schema = new Schema<IRole>(
     {
-        uuid: {
-            type: Schema.Types.String,
-            required: [true, "Uuid is required"],
-        },
         name: {
             type: Schema.Types.String,
             required: [true, "Name is required"],
         },
-        description: {
-            type: Schema.Types.String,
-        },
+        permissions: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "permissions",
+            },
+        ],
         status: {
             type: Schema.Types.Boolean,
             default: true,
@@ -31,4 +31,4 @@ const RoleSchema: Schema = new Schema<IRole>(
     }
 );
 
-export const Role = mongoose.model<IRole>("Role", RoleSchema);
+export const Role = model<IRole>("Role", RoleSchema);
