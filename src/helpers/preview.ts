@@ -1,5 +1,10 @@
-export const rolePreview = (role: string) => {
-    return role
+import { findRoleRepo } from "../repositories/role.repository";
+import { Types } from "mongoose";
+import ObjectId = Types.ObjectId;
+
+export const rolePreview = async (role: string) => {
+    const savedRole = await findRoleRepo({ _id: new ObjectId(role) });
+    return savedRole?.name
         .split("_") // Split the string by underscores
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
         .join(" "); // Join the words with spaces
