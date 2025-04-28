@@ -5,7 +5,7 @@ import {
     createRoleService,
     getAllRolesService,
     getPagedRolesService,
-    getRoleService,
+    getOneAggregateRoleService,
     updateRoleService,
 } from "../services/role.service";
 
@@ -78,7 +78,7 @@ export const getRoleController = async (
 ): Promise<any> => {
     try {
         const { id } = req.params;
-        const response = await getRoleService(id);
+        const response = await getOneAggregateRoleService(id);
         return sendResponse(res, 200, messages.ROLE_FETCH_SUCCESS, response);
     } catch (error: any) {
         return sendResponse(

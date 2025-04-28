@@ -52,6 +52,12 @@ export const getPagedRolesService = async (data: any) => {
                     result: "$data",
                 },
             },
+            {
+                $project: {
+                    "result.users.recoveryCode": 0,
+                    "result.users.password": 0,
+                },
+            },
         ];
         const roles = await aggregateRoleRepo(pipeline);
 
@@ -81,7 +87,11 @@ export const updateRoleService = async (id: any, data: any) => {
             );
         }
         delete data.id;
-        return await updateRoleRepo({ _id: new ObjectId(id) }, data);
+        const updatedRole: any = await updateRoleRepo(
+            { _id: new ObjectId(id) },
+            data
+        );
+        return await getOneAggregateRoleService(updatedRole._id);
     } catch (e) {
         console.error(e);
         throw e;
@@ -102,7 +112,7 @@ export const createRoleService = async (data: any) => {
     }
 };
 
-export const getRoleService = async (id: any) => {
+export const getOneAggregateRoleService = async (id: any) => {
     try {
         const pipeline = [
             {
@@ -124,6 +134,12 @@ export const getRoleService = async (id: any) => {
                     from: "users",
                     foreignField: "role",
                     localField: "_id",
+                },
+            },
+            {
+                $project: {
+                    "users.password": 0,
+                    "users.recoveryCode": 0,
                 },
             },
         ];

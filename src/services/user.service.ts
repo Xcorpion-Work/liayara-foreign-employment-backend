@@ -422,6 +422,7 @@ export const getOneAggregateUserService = async (id: any) => {
                             in: "$$perm.code",
                         },
                     },
+                    roleName: "$role.name",
                 },
             },
             {
@@ -438,6 +439,7 @@ export const getOneAggregateUserService = async (id: any) => {
                     phone: 1,
                     remark: 1,
                     role: 1,
+                    roleName: 1,
                     status: 1,
                     updatedAt: 1,
                     username: 1,
@@ -454,13 +456,18 @@ export const getOneAggregateUserService = async (id: any) => {
     }
 };
 
-export const updateUserService = async (id: any, data: any) => {
+export const updateUserService = async (id: string, data: any) => {
     try {
         const existingUser = await findUsersRepo({ _id: new ObjectId(id) });
-        if (existingUser.length < 1) {
+
+        if (!existingUser || existingUser.length < 1) {
             throw new Error(errors.USER_ID_IS_INVALID);
         }
-        return await updateUserRepo({ _id: new ObjectId(id) }, data);
+        const updatedUser: any = await updateUserRepo(
+            { _id: new ObjectId(id) },
+            data
+        );
+        return await getOneAggregateUserService(updatedUser._id);
     } catch (e) {
         console.error(e);
         throw e;
