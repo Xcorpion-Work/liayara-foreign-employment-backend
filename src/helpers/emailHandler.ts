@@ -157,7 +157,7 @@ const getFooter = () => {
     return `
         <tr>
             <td class="footer" style="background-color: #f4f4f4; padding: 20px; text-align: center;">
-                <p>&copy; 2025 Wijekoon Distributors. All rights reserved.</p>
+                <p>&copy; 2025 Liyara Foreign Employment. All rights reserved.</p>
                 <img src="cid:developer-logo" alt="Xcorpion Logo" style="max-width: 50px;">
             </td>
         </tr>
