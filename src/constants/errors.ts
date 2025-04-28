@@ -10,5 +10,6 @@ export const errors = {
     INVALID_ROLE: "Role is invalid",
     SUPER_ADMIN_CANNOT_BE_EDIT: "Super admin cannot be edit",
     ROLE_CANNOT_BE_DEACTIVATE_BECAUSE_OF_ACTIVE_USERS:
-        "Role cannot be deleted, because of role has added users",
+        "Role cannot be deactivated, because of role has added users",
+    USER_ID_IS_INVALID: "User is invalid",
 };

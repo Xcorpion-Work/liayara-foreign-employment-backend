@@ -201,15 +201,9 @@ const generateRefreshToken = async (user: any) => {
     );
 };
 
-export const confirmLoginService = async (user: any) => {
+export const confirmLoginService = async (data: any) => {
     try {
-        return {
-            username: user.username,
-            email: user.email,
-            phone: user.phone,
-            role: user.role,
-            _id: user._id,
-        };
+        return await getOneAggregateUserService(data._id);
     } catch (e: any) {
         console.error(e.message);
         throw e;
@@ -282,6 +276,193 @@ export const forgotPasswordService = async (emial: string) => {
         return await sendEmail(EMAIL_TYPES.FORGOT_PASSWORD, user.email, user);
     } catch (e: any) {
         console.error(e.message);
+        throw e;
+    }
+};
+
+export const getPagedUsersService = async (data: any) => {
+    try {
+        const { pageSize, page } = data.filters;
+        const skip = (page - 1) * pageSize;
+
+        const pipeline = [
+            {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
+            {
+                $lookup: {
+                    from: "roles",
+                    localField: "role",
+                    foreignField: "_id",
+                    as: "role",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$role",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    roleName: "$role.name",
+                },
+            },
+            {
+                $facet: {
+                    metadata: [
+                        {
+                            $count: "total",
+                        },
+                    ],
+                    data: [
+                        {
+                            $skip: skip,
+                        },
+                        {
+                            $limit: pageSize,
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: "$metadata",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    "metadata.pageIndex": page,
+                },
+            },
+            {
+                $project: {
+                    total: "$metadata.total",
+                    pageIndex: "$metadata.pageIndex",
+                    result: "$data",
+                },
+            },
+            {
+                $project: {
+                    "result.uuid": 1,
+                    "result.username": 1,
+                    total: 1,
+                    "result.updatedAt": 1,
+                    "result.roleName": 1,
+                    "result.status": 1,
+                    "result.role.updatedAt": 1,
+                    "result.role.status": 1,
+                    "result.role.permissions": 1,
+                    "result.role.name": 1,
+                    "result.role.createdAt": 1,
+                    "result.role._id": 1,
+                    "result.role.__v": 1,
+                    "result.remark": 1,
+                    "result.phone": 1,
+                    "result.nic": 1,
+                    "result.email": 1,
+                    "result.dateOfBirth": 1,
+                    "result.createdAt": 1,
+                    "result.altPhone": 1,
+                    "result.address": 1,
+                    "result._id": 1,
+                    "result.__v": 1,
+                    pageIndex: 1,
+                },
+            },
+        ];
+        const roles = await aggregateUserRepo(pipeline);
+
+        return roles[0] || { total: 0, pageIndex: page, result: [] };
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getOneAggregateUserService = async (id: any) => {
+    try {
+        const pipeline = [
+            {
+                $match: {
+                    _id: new ObjectId(id),
+                },
+            },
+            {
+                $lookup: {
+                    from: "roles",
+                    localField: "role",
+                    foreignField: "_id",
+                    as: "role",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$role",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "permissions",
+                    localField: "role.permissions",
+                    foreignField: "_id",
+                    as: "role.permissionsData",
+                },
+            },
+            {
+                $addFields: {
+                    permissionCodes: {
+                        $map: {
+                            input: "$role.permissionsData",
+                            as: "perm",
+                            in: "$$perm.code",
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    __v: 1,
+                    _id: 1,
+                    address: 1,
+                    altPhone: 1,
+                    createdAt: 1,
+                    dateOfBirth: 1,
+                    email: 1,
+                    nic: 1,
+                    permissionCodes: 1,
+                    phone: 1,
+                    remark: 1,
+                    role: 1,
+                    status: 1,
+                    updatedAt: 1,
+                    username: 1,
+                    uuid: 1,
+                },
+            },
+        ];
+        const users = await aggregateUserRepo(pipeline);
+
+        return users[0];
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const updateUserService = async (id: any, data: any) => {
+    try {
+        const existingUser = await findUsersRepo({ _id: new ObjectId(id) });
+        if (existingUser.length < 1) {
+            throw new Error(errors.USER_ID_IS_INVALID);
+        }
+        return await updateUserRepo({ _id: new ObjectId(id) }, data);
+    } catch (e) {
+        console.error(e);
         throw e;
     }
 };

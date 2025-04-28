@@ -4,15 +4,19 @@ import {
     confirmLoginController,
     forgotPasswordController,
     getAllUsersController,
+    getPagedUsersController,
+    getUserController,
     loginByForgotPasswordController,
     loginController,
     signupController,
     tokenRefreshController,
+    updateUserController,
     userStatusChangeController,
 } from "../controllers/user.controller";
 import authMiddleware from "../middlewares/auth.middleware";
 import {
     createRoleController,
+    getAllRolesController,
     getPagedRolesController,
     getRoleController,
     updateRoleController,
@@ -34,11 +38,15 @@ userRoute.post("/token-refresh", tokenRefreshController);
 userRoute.post("/change-password", authMiddleware(), changePasswordController);
 userRoute.post("/users", authMiddleware(), getAllUsersController);
 userRoute.post("/paged-roles", authMiddleware(), getPagedRolesController);
+userRoute.post("/paged-users", authMiddleware(), getPagedUsersController);
 userRoute.put("/role/:id", authMiddleware(), updateRoleController);
 userRoute.post("/permission", createPermissionController);
 userRoute.get("/permissions", authMiddleware(), getAllPermissionsController);
 userRoute.post("/role", authMiddleware(), createRoleController);
+userRoute.post("/roles", authMiddleware(), getAllRolesController);
 userRoute.get("/role/:id", authMiddleware(), getRoleController);
+userRoute.get("/user/:id", authMiddleware(), getUserController);
+userRoute.put("/user/:id", authMiddleware(), updateUserController);
 
 userRoute.put(
     "/change-status/:id",
