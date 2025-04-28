@@ -2,6 +2,7 @@ import {
     aggregateRoleRepo,
     createRoleRepo,
     findRoleRepo,
+    findRolesRepo,
     updateRoleRepo,
 } from "../repositories/role.repository";
 import mongoose from "mongoose";
@@ -128,6 +129,16 @@ export const getRoleService = async (id: any) => {
         ];
         const result = await aggregateRoleRepo(pipeline);
         return result[0];
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getAllRolesService = async (data: any) => {
+    try {
+        const { filters } = data;
+        return await findRolesRepo(filters);
     } catch (e) {
         console.error(e);
         throw e;

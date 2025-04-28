@@ -3,6 +3,7 @@ import { sendResponse } from "../helpers/sendResponse";
 import { messages } from "../constants/messages";
 import {
     createRoleService,
+    getAllRolesService,
     getPagedRolesService,
     getRoleService,
     updateRoleService,
@@ -84,6 +85,25 @@ export const getRoleController = async (
             res,
             500,
             messages.ROLE_FETCH_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const getAllRolesController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { body } = req;
+        const response = await getAllRolesService(body);
+        return sendResponse(res, 200, messages.ROLES_FETCH_SUCCESS, response);
+    } catch (error: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.ROLES_FETCH_FAILED,
             null,
             error.message
         );

@@ -6,8 +6,11 @@ import {
     createUserService,
     findAllUsersService,
     forgotPasswordService,
+    getOneAggregateUserService,
+    getPagedUsersService,
     loginByForgotPasswordService,
     tokenRefreshService,
+    updateUserService,
     userLoginService,
 } from "../services/user.service";
 import { sendResponse } from "../helpers/sendResponse";
@@ -206,6 +209,69 @@ export const userStatusChangeController = async (
             res,
             500,
             messages.USER_STATUS_CHANGE_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const getPagedUsersController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const body = req.body;
+        const response = await getPagedUsersService(body);
+        return sendResponse(
+            res,
+            200,
+            messages.PAGED_USERS_FETCH_SUCCESS,
+            response
+        );
+    } catch (error: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.PAGED_USERS_FETCH_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const getUserController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { id } = req.params;
+        const response = await getOneAggregateUserService(id);
+        return sendResponse(res, 200, messages.USER_FETCH_SUCCESS, response);
+    } catch (error: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.USER_FETCH_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const updateUserController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { id } = req.params;
+        const body = req.body;
+        const response = await updateUserService(id, body);
+        return sendResponse(res, 200, messages.USER_UPDATE_SUCCESS, response);
+    } catch (error: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.USER_UPDATE_FAILED,
             null,
             error.message
         );
