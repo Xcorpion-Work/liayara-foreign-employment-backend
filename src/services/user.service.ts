@@ -96,7 +96,8 @@ const checkExistingUserService = (
 
 export const findUserByUuidService = async (uuid: string) => {
     try {
-        return await findUserRepo({ uuid: uuid });
+        const user: any = await findUserRepo({ uuid: uuid });
+        return await getOneAggregateUserService(user?._id);
     } catch (e: any) {
         console.error(e.message);
         throw e;
@@ -231,9 +232,12 @@ export const tokenRefreshService = async (data: any) => {
 
 export const changePasswordService = async (data: any, user: any) => {
     try {
+        const userWithPassword: any = await findUserRepo({
+            _id: new ObjectId(user._id),
+        });
         const isCurrentPasswordMatch = await bcrypt.compare(
             data.currentPassword,
-            user.password
+            userWithPassword.password
         );
         if (!isCurrentPasswordMatch) {
             throw new Error("Current password is wrong");
