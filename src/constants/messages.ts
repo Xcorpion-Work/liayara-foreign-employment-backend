@@ -37,4 +37,10 @@ export const messages = {
     USER_FETCH_SUCCESS: "User fetch success",
     USER_UPDATE_FAILED: "User update failed",
     USER_UPDATE_SUCCESS: "User update success",
+    ORGANIZATION_DATA_CREATED_SUCCESS: "Organization data created success",
+    ORGANIZATION_DATA_CREATED_FAILED: "Organization data created failed",
+    ORGANIZATION_DATA_UPDATED_SUCCESS: "Organization data updated success",
+    ORGANIZATION_DATA_UPDATED_FAILED: "Organization data updated failed",
+    ORGANIZATION_DATA_FETCH_SUCCESS: "Organization data fetch success",
+    ORGANIZATION_DATA_FETCH_FAILED: "Organization data fetch failed",
 };
