@@ -81,7 +81,7 @@ export const updateRoleService = async (id: any, data: any) => {
             role: new ObjectId(id),
             status: true,
         });
-        if (roleBaseUsers.length > 0 && !data.status) {
+        if (roleBaseUsers.length > 0 && data.status && !data.status) {
             throw new Error(
                 errors.ROLE_CANNOT_BE_DEACTIVATE_BECAUSE_OF_ACTIVE_USERS
             );
