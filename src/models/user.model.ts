@@ -1,5 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { USER_ROLES } from "../constants/settings";
+import { IRole } from "./role.model";
+import ObjectId = mongoose.Types.ObjectId;
+import { errors } from "../constants/errors";
+import { findRoleRepo } from "../repositories/role.repository";
 
 export interface IUser extends Document {
     uuid: string;
@@ -13,8 +16,10 @@ export interface IUser extends Document {
     remark: string;
     password: string;
     recoveryCode: string;
-    role: string;
+    role: IRole;
     status: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const UserSchema: Schema = new Schema<IUser>(
@@ -63,9 +68,18 @@ const UserSchema: Schema = new Schema<IUser>(
             required: [true, "Recovery code is required"],
         },
         role: {
-            type: Schema.Types.String,
+            type: Schema.Types.ObjectId,
             required: [true, "Role is required"],
-            enum: Object.values(USER_ROLES),
+            ref: "roles",
+            validate: {
+                validator: async function (roleId: any) {
+                    const role = await findRoleRepo({
+                        _id: new ObjectId(roleId),
+                    });
+                    return !!role;
+                },
+                message: errors.INVALID_ROLE,
+            },
         },
         status: {
             type: Schema.Types.Boolean,

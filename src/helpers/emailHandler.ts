@@ -30,9 +30,14 @@ export const createEmailBody = async (type: string, data: any) => {
             process.env.NODE_ENV === "qa"
                 ? "https://qa-lfe-app.xcorpion.xyz/login"
                 : "https://lfe-app.xcorpion.xyz/login";
+        const pinInputUrl =
+            process.env.NODE_ENV === "qa"
+                ? `https://qa-lfe-app.xcorpion.xyz/pin-input?uuid=${data.uuid}`
+                : `https://lfe-app.xcorpion.xyz/pin-input?uuid=${data.uuid}`;
         const supportEmail =
             process.env.SUPPORT_EMAIL || "support@xcorpion.xyz";
         if (type === EMAIL_TYPES.ADD_USER) {
+            const role = await rolePreview(data.role);
             return `
             ${getHeader("Welcome to Liyara Foreign Employment")}
             <tr>
@@ -43,7 +48,7 @@ export const createEmailBody = async (type: string, data: any) => {
                     <p>Here is your login details</p>
                     <p>Email: ${data.email}</p>
                     <p>Phone: ${data.phone}</p>
-                    <p>Role: ${rolePreview(data.role)}</p>
+                    <p>Role: ${role}</p>
                     <p>Password: ${data.password}</p>
                     <br>
                     <p>Please change your password immediately. Click here to <a href="${loginUrl}" style="color: #1a73e8;">login</a>.</p>
@@ -59,19 +64,32 @@ export const createEmailBody = async (type: string, data: any) => {
         }
         if (type === EMAIL_TYPES.FORGOT_PASSWORD) {
             return `
-            ${getHeader("Password Reset Request")}
-            <tr>
-                <td class="body-content">
-                    <p>Hi ${data.name},</p>
-                    <p>We received a request to reset your password. Click the link below to proceed:</p>
-                    <p><a href="${data.resetLink}" style="color: #1a73e8;">Reset Your Password</a></p>
-                    <p>If you did not request this, please ignore this email or contact support.</p>
-                    <p>Thank you,</p>
-                    <p><strong>The Wijekoon Distributors Team</strong></p>
-                </td>
-            </tr>
-            ${getFooter()}
-            `;
+    ${getHeader("Password Reset Request")}
+
+    <tr>
+      <td class="body-content" style="font-family: Arial, sans-serif; font-size: 14px; color: #333; padding: 20px;">
+        <p style="margin-bottom: 16px;">Hi <strong>${data.username}</strong>,</p>
+
+        <p style="margin-bottom: 16px;">We received a request to reset your password. Please use the recovery code below to proceed:</p>
+
+        <div style="background-color: #f4f4f4; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; letter-spacing: 1px; margin-bottom: 24px;">
+          ${data.recoveryCode}
+        </div>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+          <a href="${pinInputUrl}" style="background-color: #1a73e8; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; display: inline-block;">
+            Click here to enter recovery code
+          </a>
+        </div>
+
+        <p style="margin-bottom: 16px;">If you did not request a password reset, you can safely ignore this email or <a href="mailto:support@xcorpion.xyz" style="color: #1a73e8; text-decoration: none;">contact our support team</a>.</p>
+
+        <p style="margin-top: 32px;">Thank you,<br/><strong>The Liyara Foreign Employment Team</strong></p>
+      </td>
+    </tr>
+
+    ${getFooter()}
+  `;
         }
         return null;
     } catch (e: any) {
@@ -139,7 +157,7 @@ const getFooter = () => {
     return `
         <tr>
             <td class="footer" style="background-color: #f4f4f4; padding: 20px; text-align: center;">
-                <p>&copy; 2025 Wijekoon Distributors. All rights reserved.</p>
+                <p>&copy; 2025 Liyara Foreign Employment. All rights reserved.</p>
                 <img src="cid:developer-logo" alt="Xcorpion Logo" style="max-width: 50px;">
             </td>
         </tr>

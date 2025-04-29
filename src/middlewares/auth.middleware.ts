@@ -4,7 +4,7 @@ import { sendResponse } from "../helpers/sendResponse";
 import jwt from "jsonwebtoken";
 import { findUserByUuidService } from "../services/user.service";
 
-const authMiddleware = () => {
+const authMiddleware = (permissions: string[] = []) => {
     return async (
         req: IRequest,
         res: IResponse,
@@ -18,7 +18,7 @@ const authMiddleware = () => {
                 sendResponse(
                     res,
                     401,
-                    "Unauthorized: No token Provided",
+                    "Unauthorized: No token provided",
                     null,
                     "Unauthorized"
                 );
@@ -41,6 +41,26 @@ const authMiddleware = () => {
                     "Unauthorized"
                 );
                 return;
+            }
+
+            // Permission check
+            if (permissions.length > 0) {
+                const userPermissions = req.user.permissionCodes || [];
+
+                const hasAnyPermission = permissions.some((permission) =>
+                    userPermissions.includes(permission)
+                );
+
+                if (!hasAnyPermission) {
+                    sendResponse(
+                        res,
+                        403,
+                        "Forbidden: Insufficient permissions",
+                        null,
+                        "Forbidden"
+                    );
+                    return;
+                }
             }
 
             next();
