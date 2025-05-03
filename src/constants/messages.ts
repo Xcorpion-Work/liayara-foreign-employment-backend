@@ -43,4 +43,10 @@ export const messages = {
     ORGANIZATION_DATA_UPDATED_FAILED: "Organization data updated failed",
     ORGANIZATION_DATA_FETCH_SUCCESS: "Organization data fetch success",
     ORGANIZATION_DATA_FETCH_FAILED: "Organization data fetch failed",
+    PASSENGER_STATUS_CREATE_SUCCESS: "Passenger status create success",
+    PASSENGER_STATUS_CREATE_FAILED: "Passenger status create failed",
+    PASSENGER_STATUS_FETCH_SUCCESS: "Passenger status fetch success",
+    PASSENGER_STATUS_FETCH_FAILED: "Passenger status fetch failed",
+    PASSENGER_STATUS_UPDATE_SUCCESS: "Passenger status update success",
+    PASSENGER_STATUS_UPDATE_FAILED: "Passenger status update failed",
 };

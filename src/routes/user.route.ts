@@ -43,7 +43,7 @@ userRoute.post("/forgot-password", forgotPasswordController);
 userRoute.post("/login-by-forgot-password", loginByForgotPasswordController);
 userRoute.post("/change-password", authMiddleware(), changePasswordController);
 
-userRoute.post("/users", authMiddleware(), getAllUsersController);
+userRoute.post("/users", authMiddleware([]), getAllUsersController);
 userRoute.post("/paged-users", authMiddleware(), getPagedUsersController);
 userRoute.get("/user/:id", authMiddleware(), getUserController);
 userRoute.put("/user/:id", authMiddleware(), updateUserController);
