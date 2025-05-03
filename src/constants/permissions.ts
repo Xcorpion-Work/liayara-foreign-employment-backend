@@ -1,1 +1,13 @@
-export const permissions = {};
+export const CREATE_ROLE = "CREATE_ROLE";
+export const EDIT_ROLE = "EDIT_ROLE";
+export const VIEW_ROLE = "VIEW_ROLE";
+
+export const CREATE_USER = "CREATE_USER";
+export const EDIT_USER = "EDIT_USER";
+export const VIEW_USER = "VIEW_USER";
+
+export const VIEW_ORGANIZATION_DATA = "VIEW_ORGANIZATION_DATA";
+export const EDIT_ORGANIZATION_DATA = "EDIT_ORGANIZATION_DATA";
+
+export const VIEW_PASSENGER_STATUS = "VIEW.PASSENGER.STATUS";
+export const EDIT_PASSENGER_STATUS = "EDIT.PASSENGER.STATUS";

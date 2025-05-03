@@ -12,4 +12,5 @@ export const errors = {
     ROLE_CANNOT_BE_DEACTIVATE_BECAUSE_OF_ACTIVE_USERS:
         "Role cannot be deactivated, because of role has added users",
     USER_ID_IS_INVALID: "User is invalid",
+    PASSENGER_STATUS_EXIST: "Passenger status is already exist",
 };
