@@ -13,4 +13,7 @@ export const errors = {
         "Role cannot be deactivated, because of role has added users",
     USER_ID_IS_INVALID: "User is invalid",
     PASSENGER_STATUS_EXIST: "Passenger status is already exist",
+    PASSENGER_DOCUMENT_TYPE_ALREADY_EXIST:
+        "Passenger document type already exist",
+    JOB_CATALOG_ALREADY_EXIST: "Job is already exist",
 };

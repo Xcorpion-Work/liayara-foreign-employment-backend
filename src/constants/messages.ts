@@ -49,4 +49,28 @@ export const messages = {
     PASSENGER_STATUS_FETCH_FAILED: "Passenger status fetch failed",
     PASSENGER_STATUS_UPDATE_SUCCESS: "Passenger status update success",
     PASSENGER_STATUS_UPDATE_FAILED: "Passenger status update failed",
+    PASSENGER_DOCUMENT_TYPE_CREATE_SUCCESS:
+        "Passenger document type create success",
+    PASSENGER_DOCUMENT_TYPE_CREATE_FAILED:
+        "Passenger document type create failed",
+    PASSENGER_DOCUMENT_TYPES_FETCH_SUCCESS:
+        "Passenger document types fetch success",
+    PASSENGER_DOCUMENT_TYPES_FETCH_FAILED:
+        "Passenger document types fetch failed",
+    PASSENGER_DOCUMENT_TYPE_FETCH_SUCCESS:
+        "Passenger document type fetch success",
+    PASSENGER_DOCUMENT_TYPE_FETCH_FAILED:
+        "Passenger document type fetch failed",
+    PASSENGER_DOCUMENT_TYPE_UPDATE_SUCCESS:
+        "Passenger document type update success",
+    PASSENGER_DOCUMENT_TYPE_UPDATE_FAILED:
+        "Passenger document type update failed",
+    JOB_CATALOG_CREATE_SUCCESS: "Job catalog created successfully",
+    JOB_CATALOG_CREATE_FAILED: "Failed to create job catalog",
+    JOB_CATALOG_UPDATE_SUCCESS: "Job catalog updated successfully",
+    JOB_CATALOG_UPDATE_FAILED: "Failed to update job catalog",
+    JOB_CATALOGS_FETCH_SUCCESS: "Job catalogs fetched successfully",
+    JOB_CATALOGS_FETCH_FAILED: "Failed to fetch job catalogs",
+    JOB_CATALOG_FETCH_SUCCESS: "Job catalog fetched successfully",
+    JOB_CATALOG_FETCH_FAILED: "Failed to fetch job catalog",
 };

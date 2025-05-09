@@ -8,6 +8,7 @@ import { errors } from "../constants/errors";
 import mongoose from "mongoose";
 
 import ObjectId = mongoose.Types.ObjectId;
+import { findRoleRepo } from "../repositories/role.repository";
 
 export const createPassengerStatusService = async (data: any) => {
     try {
@@ -17,6 +18,8 @@ export const createPassengerStatusService = async (data: any) => {
         if (existingStatus) {
             throw new Error(errors.PASSENGER_STATUS_EXIST);
         }
+        const superAdmin: any = await findRoleRepo({ name: "Super Admin" });
+        data.roles = [superAdmin._id];
         return await createPassengerStatusRepo(data);
     } catch (e) {
         console.error(e);
