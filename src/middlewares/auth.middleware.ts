@@ -20,7 +20,7 @@ const authMiddleware = (permissions: string[] = []) => {
                     401,
                     "Unauthorized: No token provided",
                     null,
-                    "Unauthorized"
+                    "Unauthorized: No token provided"
                 );
                 return;
             }
@@ -38,14 +38,14 @@ const authMiddleware = (permissions: string[] = []) => {
                     401,
                     "Unauthorized: User not found",
                     null,
-                    "Unauthorized"
+                    "Unauthorized: User not found"
                 );
                 return;
             }
 
             // Permission check
             if (permissions.length > 0) {
-                const userPermissions = req.user.permissionCodes || [];
+                const userPermissions = req.user?.permissionCodes || [];
 
                 const hasAnyPermission = permissions.some((permission) =>
                     userPermissions.includes(permission)
@@ -57,7 +57,7 @@ const authMiddleware = (permissions: string[] = []) => {
                         403,
                         "Forbidden: Insufficient permissions",
                         null,
-                        "Forbidden"
+                        "Forbidden: Insufficient permissions"
                     );
                     return;
                 }
@@ -79,7 +79,7 @@ const authMiddleware = (permissions: string[] = []) => {
                     401,
                     "Unauthorized: Invalid token",
                     null,
-                    "Unauthorized"
+                    "Unauthorized: Token has expired"
                 );
             } else {
                 console.error(
