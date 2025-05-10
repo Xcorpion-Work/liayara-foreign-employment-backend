@@ -16,4 +16,8 @@ export const errors = {
     PASSENGER_DOCUMENT_TYPE_ALREADY_EXIST:
         "Passenger document type already exist",
     JOB_CATALOG_ALREADY_EXIST: "Job is already exist",
+    COUNTRY_ALREADY_EXIST: "Country is already exist",
+    JOB_QUALIFICATION_ALREADY_EXIST: "Job qualification is already exist",
+    LANGUAGE_QUALIFICATION_ALREADY_EXIST:
+        "language qualification is already exist",
 };
