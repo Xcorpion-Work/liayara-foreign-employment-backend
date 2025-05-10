@@ -1,76 +1,127 @@
 export const messages = {
-    ROLE_CRATED_SUCCESS: "Role created success",
-    ROLE_CRATED_FAILED: "Role created failed",
-    USER_SIGNUP_SUCCESS: "User signup success",
+    // Role
+    ROLE_CREATE_SUCCESS: "Role created successfully",
+    ROLE_CREATE_FAILED: "Failed to create role",
+    ROLE_UPDATE_SUCCESS: "Role updated successfully",
+    ROLE_UPDATE_FAILED: "Failed to update role",
+    ROLE_FETCH_SUCCESS: "Role fetched successfully",
+    ROLE_FETCH_FAILED: "Failed to fetch role",
+    ROLES_FETCH_SUCCESS: "Roles fetched successfully",
+    ROLES_FETCH_FAILED: "Failed to fetch roles",
+    PAGED_ROLES_FETCH_SUCCESS: "Paged roles fetched successfully",
+    PAGED_ROLES_FETCH_FAILED: "Failed to fetch paged roles",
+
+    // User
+    USER_SIGNUP_SUCCESS: "User signup successful",
     USER_SIGNUP_FAILED: "User signup failed",
-    USER_LOGIN_SUCCESS: "User login success",
+    USER_LOGIN_SUCCESS: "User login successful",
     USER_LOGIN_FAILED: "User login failed",
-    FORGOT_PASSWORD_SUBMIT_SUCCESS: "Forgot password submit success",
-    FORGOT_PASSWORD_SUBMIT_FAILED: "Forgot password submit failed",
-    LOGIN_CONFIRM_SUCCESS: "Login confirm success",
-    LOGIN_CONFIRM_FAILED: "Login confirm failed",
-    TOKEN_REFRESHED_SUCCESS: "Token refresh success",
-    TOKEN_REFRESHED_FAILED: "Token refresh failed",
-    CHANGE_PASSWORD_SUCCESS: "Password change success",
-    CHANGE_PASSWORD_FAILED: "Password change failed",
-    USERS_FETCH_SUCCESS: "Users fetch success",
-    USERS_FETCH_FAILED: "Users fetch failed",
-    USER_STATUS_CHANGE_SUCCESS: "User status change success",
-    USER_STATUS_CHANGE_FAILED: "User status change failed",
-    PERMISSION_CREATE_SUCCESS: "Permission create success",
-    PERMISSION_CREATE_FAILED: "Permission create failed",
-    PERMISSIONS_FETCH_SUCCESS: "Permissions fetch success",
-    PERMISSIONS_FETCH_FAILED: "Permissions fetch failed",
-    PAGED_ROLES_FETCH_FAILED: "Paged roles fetch failed",
-    PAGED_ROLES_FETCH_SUCCESS: "Paged roles fetch success",
-    PAGED_USERS_FETCH_FAILED: "Paged users fetch failed",
-    PAGED_USERS_FETCH_SUCCESS: "Paged users fetch success",
-    ROLE_UPDATE_FAILED: "Role update failed",
-    ROLE_UPDATE_SUCCESS: "Role update success",
-    ROLE_CREATE_FAILED: "Role update failed",
-    ROLE_CREATE_SUCCESS: "Role update success",
-    ROLE_FETCH_FAILED: "Role fetch failed",
-    ROLE_FETCH_SUCCESS: "Role fetch success",
-    ROLES_FETCH_FAILED: "Roles fetch failed",
-    ROLES_FETCH_SUCCESS: "Roles fetch success",
-    USER_FETCH_FAILED: "User fetch failed",
-    USER_FETCH_SUCCESS: "User fetch success",
-    USER_UPDATE_FAILED: "User update failed",
-    USER_UPDATE_SUCCESS: "User update success",
-    ORGANIZATION_DATA_CREATED_SUCCESS: "Organization data created success",
-    ORGANIZATION_DATA_CREATED_FAILED: "Organization data created failed",
-    ORGANIZATION_DATA_UPDATED_SUCCESS: "Organization data updated success",
-    ORGANIZATION_DATA_UPDATED_FAILED: "Organization data updated failed",
-    ORGANIZATION_DATA_FETCH_SUCCESS: "Organization data fetch success",
-    ORGANIZATION_DATA_FETCH_FAILED: "Organization data fetch failed",
-    PASSENGER_STATUS_CREATE_SUCCESS: "Passenger status create success",
-    PASSENGER_STATUS_CREATE_FAILED: "Passenger status create failed",
-    PASSENGER_STATUS_FETCH_SUCCESS: "Passenger status fetch success",
-    PASSENGER_STATUS_FETCH_FAILED: "Passenger status fetch failed",
-    PASSENGER_STATUS_UPDATE_SUCCESS: "Passenger status update success",
-    PASSENGER_STATUS_UPDATE_FAILED: "Passenger status update failed",
+    USER_UPDATE_SUCCESS: "User updated successfully",
+    USER_UPDATE_FAILED: "Failed to update user",
+    USER_FETCH_SUCCESS: "User fetched successfully",
+    USER_FETCH_FAILED: "Failed to fetch user",
+    USERS_FETCH_SUCCESS: "Users fetched successfully",
+    USERS_FETCH_FAILED: "Failed to fetch users",
+    PAGED_USERS_FETCH_SUCCESS: "Paged users fetched successfully",
+    PAGED_USERS_FETCH_FAILED: "Failed to fetch paged users",
+    USER_STATUS_CHANGE_SUCCESS: "User status changed successfully",
+    USER_STATUS_CHANGE_FAILED: "Failed to change user status",
+
+    // Auth
+    FORGOT_PASSWORD_SUBMIT_SUCCESS: "Forgot password submitted successfully",
+    FORGOT_PASSWORD_SUBMIT_FAILED: "Failed to submit forgot password",
+    LOGIN_CONFIRM_SUCCESS: "Login confirmed successfully",
+    LOGIN_CONFIRM_FAILED: "Failed to confirm login",
+    TOKEN_REFRESHED_SUCCESS: "Token refreshed successfully",
+    TOKEN_REFRESHED_FAILED: "Failed to refresh token",
+    CHANGE_PASSWORD_SUCCESS: "Password changed successfully",
+    CHANGE_PASSWORD_FAILED: "Failed to change password",
+
+    // Permission
+    PERMISSION_CREATE_SUCCESS: "Permission created successfully",
+    PERMISSION_CREATE_FAILED: "Failed to create permission",
+    PERMISSIONS_FETCH_SUCCESS: "Permissions fetched successfully",
+    PERMISSIONS_FETCH_FAILED: "Failed to fetch permissions",
+
+    // Organization
+    ORGANIZATION_DATA_CREATED_SUCCESS: "Organization data created successfully",
+    ORGANIZATION_DATA_CREATED_FAILED: "Failed to create organization data",
+    ORGANIZATION_DATA_UPDATED_SUCCESS: "Organization data updated successfully",
+    ORGANIZATION_DATA_UPDATED_FAILED: "Failed to update organization data",
+    ORGANIZATION_DATA_FETCH_SUCCESS: "Organization data fetched successfully",
+    ORGANIZATION_DATA_FETCH_FAILED: "Failed to fetch organization data",
+
+    // Passenger Status
+    PASSENGER_STATUS_CREATE_SUCCESS: "Passenger status created successfully",
+    PASSENGER_STATUS_CREATE_FAILED: "Failed to create passenger status",
+    PASSENGER_STATUS_UPDATE_SUCCESS: "Passenger status updated successfully",
+    PASSENGER_STATUS_UPDATE_FAILED: "Failed to update passenger status",
+    PASSENGER_STATUS_FETCH_SUCCESS: "Passenger status fetched successfully",
+    PASSENGER_STATUS_FETCH_FAILED: "Failed to fetch passenger status",
+
+    // Passenger Document Type
     PASSENGER_DOCUMENT_TYPE_CREATE_SUCCESS:
-        "Passenger document type create success",
+        "Passenger document type created successfully",
     PASSENGER_DOCUMENT_TYPE_CREATE_FAILED:
-        "Passenger document type create failed",
-    PASSENGER_DOCUMENT_TYPES_FETCH_SUCCESS:
-        "Passenger document types fetch success",
-    PASSENGER_DOCUMENT_TYPES_FETCH_FAILED:
-        "Passenger document types fetch failed",
-    PASSENGER_DOCUMENT_TYPE_FETCH_SUCCESS:
-        "Passenger document type fetch success",
-    PASSENGER_DOCUMENT_TYPE_FETCH_FAILED:
-        "Passenger document type fetch failed",
+        "Failed to create passenger document type",
     PASSENGER_DOCUMENT_TYPE_UPDATE_SUCCESS:
-        "Passenger document type update success",
+        "Passenger document type updated successfully",
     PASSENGER_DOCUMENT_TYPE_UPDATE_FAILED:
-        "Passenger document type update failed",
+        "Failed to update passenger document type",
+    PASSENGER_DOCUMENT_TYPE_FETCH_SUCCESS:
+        "Passenger document type fetched successfully",
+    PASSENGER_DOCUMENT_TYPE_FETCH_FAILED:
+        "Failed to fetch passenger document type",
+    PASSENGER_DOCUMENT_TYPES_FETCH_SUCCESS:
+        "Passenger document types fetched successfully",
+    PASSENGER_DOCUMENT_TYPES_FETCH_FAILED:
+        "Failed to fetch passenger document types",
+
+    // Job Catalog
     JOB_CATALOG_CREATE_SUCCESS: "Job catalog created successfully",
     JOB_CATALOG_CREATE_FAILED: "Failed to create job catalog",
     JOB_CATALOG_UPDATE_SUCCESS: "Job catalog updated successfully",
     JOB_CATALOG_UPDATE_FAILED: "Failed to update job catalog",
-    JOB_CATALOGS_FETCH_SUCCESS: "Job catalogs fetched successfully",
-    JOB_CATALOGS_FETCH_FAILED: "Failed to fetch job catalogs",
     JOB_CATALOG_FETCH_SUCCESS: "Job catalog fetched successfully",
     JOB_CATALOG_FETCH_FAILED: "Failed to fetch job catalog",
+    JOB_CATALOGS_FETCH_SUCCESS: "Job catalogs fetched successfully",
+    JOB_CATALOGS_FETCH_FAILED: "Failed to fetch job catalogs",
+
+    // Country
+    COUNTRY_CREATE_SUCCESS: "Country created successfully",
+    COUNTRY_CREATE_FAILED: "Failed to create country",
+    COUNTRY_UPDATE_SUCCESS: "Country updated successfully",
+    COUNTRY_UPDATE_FAILED: "Failed to update country",
+    COUNTRY_FETCH_SUCCESS: "Country fetched successfully",
+    COUNTRY_FETCH_FAILED: "Failed to fetch country",
+    COUNTRIES_FETCH_SUCCESS: "Countries fetched successfully",
+    COUNTRIES_FETCH_FAILED: "Failed to fetch countries",
+
+    // Job Qualification
+    JOB_QUALIFICATION_CREATE_SUCCESS: "Job qualification created successfully",
+    JOB_QUALIFICATION_CREATE_FAILED: "Failed to create job qualification",
+    JOB_QUALIFICATION_UPDATE_SUCCESS: "Job qualification updated successfully",
+    JOB_QUALIFICATION_UPDATE_FAILED: "Failed to update job qualification",
+    JOB_QUALIFICATIONS_FETCH_SUCCESS: "Job qualifications fetched successfully",
+    JOB_QUALIFICATIONS_FETCH_FAILED: "Failed to fetch job qualifications",
+    JOB_QUALIFICATION_FETCH_SUCCESS: "Job qualification fetched successfully",
+    JOB_QUALIFICATION_FETCH_FAILED: "Failed to fetch job qualification",
+
+    //     language Qualification
+    LANGUAGE_QUALIFICATION_CREATE_SUCCESS:
+        "Language qualification created successfully",
+    LANGUAGE_QUALIFICATION_CREATE_FAILED:
+        "Failed to create language qualification",
+    LANGUAGE_QUALIFICATION_UPDATE_SUCCESS:
+        "Language qualification updated successfully",
+    LANGUAGE_QUALIFICATION_UPDATE_FAILED:
+        "Failed to update language qualification",
+    LANGUAGE_QUALIFICATION_FETCH_SUCCESS:
+        "Language qualification fetched successfully",
+    LANGUAGE_QUALIFICATION_FETCH_FAILED:
+        "Failed to fetch language qualification",
+    LANGUAGE_QUALIFICATIONS_FETCH_SUCCESS:
+        "Language qualifications fetched successfully",
+    LANGUAGE_QUALIFICATIONS_FETCH_FAILED:
+        "Failed to fetch language qualifications",
 };
