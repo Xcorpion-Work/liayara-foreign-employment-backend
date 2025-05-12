@@ -70,6 +70,7 @@ export const getPagedRolesService = async (data: any) => {
 
 export const updateRoleService = async (id: any, data: any) => {
     try {
+        const { status } = data;
         const role = await findRoleRepo({ _id: new ObjectId(id) });
         if (!role) {
             throw new Error(errors.INVALID_ROLE);
@@ -81,7 +82,7 @@ export const updateRoleService = async (id: any, data: any) => {
             role: new ObjectId(id),
             status: true,
         });
-        if (roleBaseUsers.length > 0 && data.status && !data.status) {
+        if (roleBaseUsers.length > 0 && status === false) {
             throw new Error(
                 errors.ROLE_CANNOT_BE_DEACTIVATE_BECAUSE_OF_ACTIVE_USERS
             );

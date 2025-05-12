@@ -5,7 +5,7 @@ export const errors = {
     USER_CANNOT_BE_FOUND: "User cannot be found, please check email again",
     UUID_REQUIRED_FOR_PASSWORD_FORGOT_USERS:
         "Please click the button of email and then enter recovery code",
-    RECOVERY_CODE_IS_NOT_VALID: "Please add valid recovery code",
+    RECOVERY_CODE_IS_NOT_VALID: "Please enter valid recovery code",
     PERMISSION_ALREADY_EXIST: "Permission is already exist by code",
     INVALID_ROLE: "Role is invalid",
     SUPER_ADMIN_CANNOT_BE_EDIT: "Super admin cannot be edit",

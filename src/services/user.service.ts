@@ -12,9 +12,10 @@ import bcrypt from "bcryptjs";
 import { sendEmail } from "./email.service";
 import { EMAIL_TYPES } from "../helpers/emailHandler";
 import { findPermissionsRepo } from "../repositories/permission.repository";
-import { createRoleRepo } from "../repositories/role.repository";
+import { createRoleRepo, findRoleRepo } from "../repositories/role.repository";
 import mongoose from "mongoose";
 import ObjectId = mongoose.Types.ObjectId;
+import { updateRoleService } from "./role.service";
 
 export const createUserService = async (data: any) => {
     try {
@@ -147,7 +148,7 @@ export const loginByForgotPasswordService = async (data: any) => {
             throw new Error(errors.UUID_REQUIRED_FOR_PASSWORD_FORGOT_USERS);
         }
 
-        const user = await findUserByUuidService(uuid);
+        const user = await findUserRepo({ uuid });
         if (!user) {
             throw new Error("user not found");
         }
@@ -246,7 +247,16 @@ export const changePasswordService = async (data: any, user: any) => {
             throw new Error("New password and Confirm password is not match");
         }
         const password = await bcrypt.hash(data.newPassword, 10);
-        return await updateUserRepo({ _id: user._id }, { password: password });
+        const result: any = await updateUserRepo(
+            { _id: user._id },
+            { password }
+        );
+
+        const userObj = result?.toObject?.() || result;
+        delete userObj.password;
+        delete userObj.recoveryCode;
+
+        return userObj;
     } catch (e: any) {
         console.error(e.message);
         throw e;
@@ -462,11 +472,25 @@ export const getOneAggregateUserService = async (id: any) => {
 
 export const updateUserService = async (id: string, data: any) => {
     try {
-        const existingUser = await findUsersRepo({ _id: new ObjectId(id) });
+        const existingUser: any = await findUsersRepo({
+            _id: new ObjectId(id),
+        });
 
         if (!existingUser || existingUser.length < 1) {
             throw new Error(errors.USER_ID_IS_INVALID);
         }
+
+        if (data.status === true) {
+            const relatedRole: any = await findRoleRepo({
+                _id: existingUser[0]?.role,
+            });
+            if (!relatedRole?.status) {
+                await updateRoleService(existingUser[0]?.role, {
+                    status: true,
+                });
+            }
+        }
+
         const updatedUser: any = await updateUserRepo(
             { _id: new ObjectId(id) },
             data

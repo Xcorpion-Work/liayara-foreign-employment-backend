@@ -60,7 +60,9 @@ userRoute.post(
     getPagedUsersController
 );
 userRoute.get("/user/:id", authMiddleware([VIEW_USER]), getUserController);
+userRoute.get("/personal-data/:id", authMiddleware(), getUserController);
 userRoute.put("/user/:id", authMiddleware([EDIT_USER]), updateUserController);
+userRoute.put("/personal-data/:id", authMiddleware(), updateUserController);
 
 userRoute.post(
     "/paged-roles",
