@@ -20,4 +20,5 @@ export const errors = {
     JOB_QUALIFICATION_ALREADY_EXIST: "Job qualification is already exist",
     LANGUAGE_QUALIFICATION_ALREADY_EXIST:
         "language qualification is already exist",
+    SUB_AGENT_ALREADY_EXIST: "Sub agent is already exist",
 };

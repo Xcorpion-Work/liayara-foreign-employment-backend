@@ -124,4 +124,8 @@ export const messages = {
         "Language qualifications fetched successfully",
     LANGUAGE_QUALIFICATIONS_FETCH_FAILED:
         "Failed to fetch language qualifications",
+
+    //     Sub Agent
+    SUB_AGENT_CREATE_SUCCESS: "Sub agent created successfully",
+    SUB_AGENT_CREATE_FAILED: "Failed to create sub agent",
 };
