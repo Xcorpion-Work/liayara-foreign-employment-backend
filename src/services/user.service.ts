@@ -296,15 +296,34 @@ export const forgotPasswordService = async (emial: string) => {
 
 export const getPagedUsersService = async (data: any) => {
     try {
-        const { pageSize, page } = data.filters;
+        const { pageSize, page, searchQuery, status, role } = data.filters;
         const skip = (page - 1) * pageSize;
+        const matchStage: any = {};
 
-        const pipeline = [
-            {
-                $sort: {
-                    createdAt: -1,
-                },
-            },
+        if (searchQuery) {
+            matchStage.$or = [
+                { name: { $regex: searchQuery, $options: "i" } },
+                { phone: { $regex: searchQuery, $options: "i" } },
+                { email: { $regex: searchQuery, $options: "i" } },
+            ];
+        }
+
+        if (status) {
+            matchStage.status = status === "ACTIVE";
+        }
+
+        if (role) {
+            matchStage.role = new ObjectId(role);
+        }
+
+        const pipeline: any[] = [];
+
+        if (Object.keys(matchStage).length > 0) {
+            pipeline.push({ $match: matchStage });
+        }
+
+        pipeline.push(
+            { $sort: { createdAt: -1 } },
             {
                 $lookup: {
                     from: "roles",
@@ -326,19 +345,8 @@ export const getPagedUsersService = async (data: any) => {
             },
             {
                 $facet: {
-                    metadata: [
-                        {
-                            $count: "total",
-                        },
-                    ],
-                    data: [
-                        {
-                            $skip: skip,
-                        },
-                        {
-                            $limit: pageSize,
-                        },
-                    ],
+                    metadata: [{ $count: "total" }],
+                    data: [{ $skip: skip }, { $limit: pageSize }],
                 },
             },
             {
@@ -386,11 +394,11 @@ export const getPagedUsersService = async (data: any) => {
                     "result.__v": 1,
                     pageIndex: 1,
                 },
-            },
-        ];
-        const roles = await aggregateUserRepo(pipeline);
+            }
+        );
 
-        return roles[0] || { total: 0, pageIndex: page, result: [] };
+        const users = await aggregateUserRepo(pipeline);
+        return users[0] || { total: 0, pageIndex: page, result: [] };
     } catch (e) {
         console.error(e);
         throw e;
