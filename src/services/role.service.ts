@@ -13,10 +13,25 @@ import { findUsersRepo } from "../repositories/user.repository";
 
 export const getPagedRolesService = async (data: any) => {
     try {
-        const { pageSize, page } = data.filters;
+        const { pageSize, page, searchQuery, status } = data.filters;
         const skip = (page - 1) * pageSize;
+        const matchStage: any = {};
 
-        const pipeline = [
+        if (searchQuery) {
+            matchStage.$or = [{ name: { $regex: searchQuery, $options: "i" } }];
+        }
+
+        if (status) {
+            matchStage.status = status === "ACTIVE";
+        }
+
+        const pipeline: any[] = [];
+
+        if (Object.keys(matchStage).length > 0) {
+            pipeline.push({ $match: matchStage });
+        }
+
+        pipeline.push(
             {
                 $sort: { createdAt: -1 },
             },
@@ -57,8 +72,8 @@ export const getPagedRolesService = async (data: any) => {
                     "result.users.recoveryCode": 0,
                     "result.users.password": 0,
                 },
-            },
-        ];
+            }
+        );
         const roles = await aggregateRoleRepo(pipeline);
 
         return roles[0] || { total: 0, pageIndex: page, result: [] };
