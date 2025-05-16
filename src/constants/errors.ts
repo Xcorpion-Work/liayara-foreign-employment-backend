@@ -24,4 +24,8 @@ export const errors = {
     INVALID_SUB_AGENT: "Sub agent is invalid",
     SUB_AGENT_CANNOT_BE_DEACTIVATE:
         "Sub agent cannot be deactivate because of related passengers",
+    FOREIGN_AGENT_ALREADY_EXIST: "Foreign agent already exists",
+    INVALID_FOREIGN_AGENT: "Foreign agent is invalid",
+    FOREIGN_AGENT_CANNOT_BE_DEACTIVATED:
+        "Foreign agent cannot be deactivated because of related passengers",
 };
