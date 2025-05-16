@@ -128,4 +128,10 @@ export const messages = {
     //     Sub Agent
     SUB_AGENT_CREATE_SUCCESS: "Sub agent created successfully",
     SUB_AGENT_CREATE_FAILED: "Failed to create sub agent",
+    SUB_AGENT_UPDATE_SUCCESS: "Sub agent updated successfully",
+    SUB_AGENT_UPDATE_FAILED: "Failed to update sub agent",
+    SUB_AGENTS_FETCH_SUCCESS: "Sub agents fetched successfully",
+    SUB_AGENTS_FETCH_FAILED: "Failed to fetched sub agents",
+    SUB_AGENT_FETCH_SUCCESS: "Sub agent fetched successfully",
+    SUB_AGENT_FETCH_FAILED: "Failed to fetched sub agent",
 };

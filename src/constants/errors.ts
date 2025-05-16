@@ -21,4 +21,7 @@ export const errors = {
     LANGUAGE_QUALIFICATION_ALREADY_EXIST:
         "language qualification is already exist",
     SUB_AGENT_ALREADY_EXIST: "Sub agent is already exist",
+    INVALID_SUB_AGENT: "Sub agent is invalid",
+    SUB_AGENT_CANNOT_BE_DEACTIVATE:
+        "Sub agent cannot be deactivate because of related passengers",
 };
