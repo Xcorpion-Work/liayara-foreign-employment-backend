@@ -19,3 +19,7 @@ export const findAllSubAgentRepo = (filters: any) => {
 export const aggregateSubAgentRepo = (pipeline: any) => {
     return SubAgent.aggregate(pipeline).exec();
 };
+
+export const findLastAddedSubAgentRepo = () => {
+    return SubAgent.findOne().sort({ createdAt: -1 });
+};

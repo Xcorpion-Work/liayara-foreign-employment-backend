@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 
 export interface ISubAgent extends Document {
+    subAgentId: string;
     name: string;
     phone: string;
     altPhone: string;
@@ -14,6 +15,11 @@ export interface ISubAgent extends Document {
 
 const SubAgentSchema = new Schema<ISubAgent>(
     {
+        subAgentId: {
+            type: Schema.Types.String,
+            required: [true, "Sub agent id is required"],
+            unique: true,
+        },
         name: {
             type: Schema.Types.String,
             required: [true, "Name is required"],
