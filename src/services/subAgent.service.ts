@@ -1,6 +1,7 @@
 import {
     aggregateSubAgentRepo,
     createSubAgentRepo,
+    findLastAddedSubAgentRepo,
     findOneSubAgentRepo,
     updateSubAgentRepo,
 } from "../repositories/subAgent.repository";
@@ -19,9 +20,34 @@ export const createSubAgentService = async (data: any) => {
         if (existingSubAgent) {
             throw new Error(errors.SUB_AGENT_ALREADY_EXIST);
         }
+        data.subAgentId = await generateSubAgentId();
         return await createSubAgentRepo(data);
     } catch (e) {
         console.error(e);
+        throw e;
+    }
+};
+
+const generateSubAgentId = async () => {
+    try {
+        const lastAddedSubAgent = await findLastAddedSubAgentRepo();
+
+        if (!lastAddedSubAgent || !lastAddedSubAgent.subAgentId) {
+            return "LSA-0001";
+        }
+
+        const lastId = lastAddedSubAgent.subAgentId;
+        const match = lastId.match(/^LSA-(\d{4})$/);
+
+        if (!match) {
+            return "LSA-0001";
+        }
+
+        const numericPart = parseInt(match[1], 10);
+        const nextNumber = numericPart + 1;
+        return `LSA-${nextNumber.toString().padStart(4, "0")}`;
+    } catch (e) {
+        console.error("Error generating SubAgent ID:", e);
         throw e;
     }
 };
@@ -35,6 +61,7 @@ export const getPagedSubAgentService = async (data: any) => {
         if (searchQuery) {
             matchStage.$or = [
                 { name: { $regex: searchQuery, $options: "i" } },
+                { subAgentId: { $regex: searchQuery, $options: "i" } },
                 {
                     phone: {
                         $regex: searchQuery,
