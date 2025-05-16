@@ -6,6 +6,7 @@ export interface ISubAgent extends Document {
     altPhone: string;
     email: string;
     address: string;
+    remark: string;
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -27,9 +28,11 @@ const SubAgentSchema = new Schema<ISubAgent>(
         },
         email: {
             type: Schema.Types.String,
-            unique: true,
         },
         address: {
+            type: Schema.Types.String,
+        },
+        remark: {
             type: Schema.Types.String,
         },
         status: {
