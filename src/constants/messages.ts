@@ -134,4 +134,14 @@ export const messages = {
     SUB_AGENTS_FETCH_FAILED: "Failed to fetched sub agents",
     SUB_AGENT_FETCH_SUCCESS: "Sub agent fetched successfully",
     SUB_AGENT_FETCH_FAILED: "Failed to fetched sub agent",
+
+    // Foreign Agent
+    FOREIGN_AGENT_CREATE_SUCCESS: "Foreign agent created successfully",
+    FOREIGN_AGENT_CREATE_FAILED: "Failed to create foreign agent",
+    FOREIGN_AGENTS_FETCH_SUCCESS: "Foreign agents fetched successfully",
+    FOREIGN_AGENTS_FETCH_FAILED: "Failed to fetch foreign agents",
+    FOREIGN_AGENT_FETCH_SUCCESS: "Foreign agent fetched successfully",
+    FOREIGN_AGENT_FETCH_FAILED: "Failed to fetch foreign agent",
+    FOREIGN_AGENT_UPDATE_SUCCESS: "Foreign agent updated successfully",
+    FOREIGN_AGENT_UPDATE_FAILED: "Failed to update foreign agent",
 };
