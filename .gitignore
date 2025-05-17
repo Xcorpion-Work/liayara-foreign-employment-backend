@@ -131,4 +131,4 @@ dist
 
 #new
 config/*.env
-firebase-service-account.json
+./firebase-service-account.json
