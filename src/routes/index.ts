@@ -3,6 +3,7 @@ import userRoute from "./user.route";
 import settingsRoute from "./settings.route";
 import subAgentRoute from "./subAgent.route";
 import foreignAgentRoute from "./foreignAgent.route";
+import filesRouter from "./fileUpload.route";
 
 const routes = Router();
 
@@ -13,5 +14,6 @@ routes.use("/users", userRoute);
 routes.use("/settings", settingsRoute);
 routes.use("/sub-agents", subAgentRoute);
 routes.use("/foreign-agents", foreignAgentRoute);
+routes.use("/files", filesRouter);
 
 export default routes;

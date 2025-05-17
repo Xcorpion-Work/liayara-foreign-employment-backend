@@ -4,7 +4,7 @@ export interface IRequest extends Request {
     body: any;
     query: any;
     user?: any;
-    file?: any;
+    file?: Express.Multer.File;
 }
 
 export interface IResponse extends Response {
