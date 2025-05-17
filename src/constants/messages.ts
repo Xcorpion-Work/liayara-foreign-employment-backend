@@ -144,4 +144,8 @@ export const messages = {
     FOREIGN_AGENT_FETCH_FAILED: "Failed to fetch foreign agent",
     FOREIGN_AGENT_UPDATE_SUCCESS: "Foreign agent updated successfully",
     FOREIGN_AGENT_UPDATE_FAILED: "Failed to update foreign agent",
+
+    //     file upload
+    FILE_UPLOAD_SUCCESS: "File uploaded successfully",
+    FILE_UPLOAD_FAILED: "Failed to upload file",
 };

@@ -29,8 +29,13 @@ jobs:
           npm install --force
           echo "🛠️ Building the project..."
           npm run build
+
+          echo "🔐 Injecting secrets..."
+          echo "${{ secrets.QA_ENV }}" > ./config/qa.env
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > ./firebase-service-account.json
+
           echo "🗜️ Compressing full backend project..."
-          tar -czf backend-dist.tar.gz package.json package-lock.json dist
+          tar -czf backend-dist.tar.gz package.json package-lock.json dist config/qa.env firebase-service-account.json
 
       # ✅ Set up SSH agent
       - name: 🔑 Set up SSH agent
