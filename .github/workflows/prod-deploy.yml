@@ -25,14 +25,14 @@ jobs:
       # ✅ Install dependencies and build backend
       - name: 🧩 Install dependencies and build backend
         run: |
+          echo "🔐 Injecting secrets..."
+          echo "${{ secrets.PROD_ENV }}" > ./config/prod.env
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > ./firebase-service-account.json
+          
           echo "📦 Installing dependencies..."
           npm install --force
           echo "🛠️ Building the project..."
           npm run build
-
-          echo "🔐 Injecting secrets..."
-          echo "${{ secrets.PROD_ENV }}" > ./config/prod.env
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > ./firebase-service-account.json
 
           echo "🗜️ Compressing full backend project..."
           tar -czf backend-dist.tar.gz package.json package-lock.json dist config/qa.env firebase-service-account.json
