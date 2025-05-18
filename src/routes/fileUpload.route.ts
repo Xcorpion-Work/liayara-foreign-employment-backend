@@ -6,6 +6,10 @@ const upload = multer({ storage: multer.memoryStorage() }); // or your config
 
 const fileUploadRoute = Router();
 
-fileUploadRoute.post("/file", upload.single("file"), fileUploadController);
+fileUploadRoute.post(
+    "/file-upload",
+    upload.single("file"),
+    fileUploadController
+);
 
 export default fileUploadRoute;

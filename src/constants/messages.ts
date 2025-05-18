@@ -148,4 +148,14 @@ export const messages = {
     //     file upload
     FILE_UPLOAD_SUCCESS: "File uploaded successfully",
     FILE_UPLOAD_FAILED: "Failed to upload file",
+
+    //     job order
+    JOB_ORDER_CREATE_SUCCESS: "Job Order created successfully",
+    JOB_ORDER_CREATE_FAILED: "Failed to create Job Order",
+    JOB_ORDER_FETCH_SUCCESS: "Job Order fetched successfully",
+    JOB_ORDER_FETCH_FAILED: "Failed to fetch Job Order",
+    JOB_ORDERS_FETCH_SUCCESS: "Job Orders fetched successfully",
+    JOB_ORDERS_FETCH_FAILED: "Failed to fetch Job Orders",
+    JOB_ORDER_UPDATE_SUCCESS: "Job Order updated successfully",
+    JOB_ORDER_UPDATE_FAILED: "Failed to update Job Order",
 };

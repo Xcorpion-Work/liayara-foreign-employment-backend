@@ -28,4 +28,8 @@ export const errors = {
     INVALID_FOREIGN_AGENT: "Foreign agent is invalid",
     FOREIGN_AGENT_CANNOT_BE_DEACTIVATED:
         "Foreign agent cannot be deactivated because of related passengers",
+    FOREIGN_AGENT_HAS_ACTIVE_JOB_ORDER: "Foreign agent has active job order",
+    INVALID_JOB_ORDER: "Invalid job order",
+    CANNOT_EDIT_ACTIVE_OR_EXPIRE_JOB_ORDERS:
+        "Cannot edit active or expired job orders",
 };
