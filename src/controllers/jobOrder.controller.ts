@@ -2,128 +2,128 @@ import { IRequest, IResponse } from "../interfaces/dto";
 import { sendResponse } from "../helpers/sendResponse";
 import { messages } from "../constants/messages";
 import {
-    createForeignAgentService,
-    getAllForeignAgentService,
-    getOneAggregateForeignAgentService,
-    getPagedForeignAgentService,
-    updateForeignAgentService,
-} from "../services/foreignAgent.service";
+    createJobOrderService,
+    getAllJobOrderService,
+    getOneAggregateJobOrderService,
+    getPagedJobOrderService,
+    updateJobOrderService,
+} from "../services/jobOrder.service";
 
-export const createForeignAgentController = async (
+export const createJobOrderController = async (
     req: IRequest,
     res: IResponse
 ): Promise<any> => {
     try {
         const body = req.body;
-        const response = await createForeignAgentService(body);
+        const response = await createJobOrderService(body);
         return sendResponse(
             res,
             201,
-            messages.FOREIGN_AGENT_CREATE_SUCCESS,
+            messages.JOB_ORDER_CREATE_SUCCESS,
             response
         );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            messages.FOREIGN_AGENT_CREATE_FAILED,
+            messages.JOB_ORDER_CREATE_FAILED,
             null,
             error.message
         );
     }
 };
 
-export const getPagedForeignAgentController = async (
+export const getPagedJobOrderController = async (
     req: IRequest,
     res: IResponse
 ): Promise<any> => {
     try {
         const body = req.body;
-        const response = await getPagedForeignAgentService(body);
+        const response = await getPagedJobOrderService(body);
         return sendResponse(
             res,
             200,
-            messages.FOREIGN_AGENTS_FETCH_SUCCESS,
+            messages.JOB_ORDERS_FETCH_SUCCESS,
             response
         );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            messages.FOREIGN_AGENTS_FETCH_FAILED,
+            messages.JOB_ORDERS_FETCH_FAILED,
             null,
             error.message
         );
     }
 };
 
-export const getAllForeignAgentController = async (
+export const getAllJobOrderController = async (
     req: IRequest,
     res: IResponse
 ): Promise<any> => {
     try {
         const body = req.body;
-        const response = await getAllForeignAgentService(body);
+        const response = await getAllJobOrderService(body);
         return sendResponse(
             res,
             200,
-            messages.FOREIGN_AGENTS_FETCH_SUCCESS,
+            messages.JOB_ORDERS_FETCH_SUCCESS,
             response
         );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            messages.FOREIGN_AGENTS_FETCH_FAILED,
+            messages.JOB_ORDERS_FETCH_FAILED,
             null,
             error.message
         );
     }
 };
 
-export const getOneForeignAgentController = async (
+export const getOneJobOrderController = async (
     req: IRequest,
     res: IResponse
 ): Promise<any> => {
     try {
         const { id } = req.params;
-        const response = await getOneAggregateForeignAgentService(id);
+        const response = await getOneAggregateJobOrderService(id);
         return sendResponse(
             res,
             200,
-            messages.FOREIGN_AGENT_FETCH_SUCCESS,
+            messages.JOB_ORDER_FETCH_SUCCESS,
             response
         );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            messages.FOREIGN_AGENT_FETCH_FAILED,
+            messages.JOB_ORDER_FETCH_FAILED,
             null,
             error.message
         );
     }
 };
 
-export const updateForeignAgentController = async (
+export const updateJobOrderController = async (
     req: IRequest,
     res: IResponse
 ): Promise<any> => {
     try {
         const { id } = req.params;
         const body = req.body;
-        const response = await updateForeignAgentService(id, body);
+        const response = await updateJobOrderService(id, body);
         return sendResponse(
             res,
             200,
-            messages.FOREIGN_AGENT_UPDATE_SUCCESS,
+            messages.JOB_ORDER_UPDATE_SUCCESS,
             response
         );
     } catch (error: any) {
         return sendResponse(
             res,
             500,
-            messages.FOREIGN_AGENT_UPDATE_FAILED,
+            messages.JOB_ORDER_UPDATE_FAILED,
             null,
             error.message
         );

@@ -4,12 +4,15 @@ import { model, Schema } from "mongoose";
 export interface IJobOrder extends Document {
     jobOrderId: string;
     foreignAgent: IForeignAgent;
+    jobOrderApprovalNumber: string;
     facilities: any;
     jobs: any;
-    issueDate: Date;
-    expireDate: Date;
-    reference: string;
+    issuedDate: Date;
+    expiredDate: Date;
+    reference: any;
     remark: string;
+    jobOrderStatus: "PENDING" | "ACTIVE" | "EXPIRED";
+    status: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -26,39 +29,52 @@ const JobOrderSchema = new Schema<IJobOrder>(
             ref: "ForeignAgent",
             required: [true, "Foreign agent is required"],
         },
+        jobOrderApprovalNumber: {
+            type: Schema.Types.String,
+            required: [true, "Job order approval number is required"],
+        },
         facilities: {
             type: Schema.Types.Mixed,
         },
         jobs: {
             type: [
                 {
-                    jobCatalog: {
+                    jobCatalogId: {
                         type: Schema.Types.ObjectId,
                         ref: "JobCatalog",
+                        required: true,
                     },
-                    vacancies: {
-                        type: Schema.Types.Number,
-                    },
-                    approvedVacancies: {
-                        type: Schema.Types.Number,
-                    },
-                    salary: {
-                        type: Schema.Types.Number,
-                    },
+                    vacancies: { type: Number, required: true },
+                    approvedVacancies: { type: Number, required: true },
+                    salary: { type: Number, required: true },
                 },
             ],
         },
-        issueDate: {
+        issuedDate: {
             type: Schema.Types.Date,
             required: [true, "Issue date is required"],
         },
-        expireDate: {
+        expiredDate: {
             type: Schema.Types.Date,
             required: [true, "Expire date is required"],
         },
         reference: {
-            type: Schema.Types.String,
+            type: {
+                name: Schema.Types.String,
+                filePath: Schema.Types.String,
+            },
             required: [true, "Reference is required"],
+        },
+        remark: {
+            type: Schema.Types.String,
+        },
+        jobOrderStatus: {
+            type: Schema.Types.String,
+            default: "PENDING",
+        },
+        status: {
+            type: Schema.Types.Boolean,
+            default: true,
         },
     },
     {

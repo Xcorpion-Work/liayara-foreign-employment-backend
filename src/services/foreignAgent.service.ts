@@ -81,6 +81,14 @@ export const getPagedForeignAgentService = async (data: any) => {
         pipeline.push(
             { $sort: { createdAt: -1 } },
             {
+                $lookup: {
+                    as: "jobOrdersData",
+                    from: "job_orders",
+                    foreignField: "foreignAgent",
+                    localField: "_id",
+                },
+            },
+            {
                 $facet: {
                     metadata: [{ $count: "total" }],
                     data: [{ $skip: skip }, { $limit: pageSize }],
@@ -120,6 +128,14 @@ export const getOneAggregateForeignAgentService = async (id: any) => {
             {
                 $match: {
                     _id: new ObjectId(id),
+                },
+            },
+            {
+                $lookup: {
+                    as: "jobOrdersData",
+                    from: "job_orders",
+                    foreignField: "foreignAgent",
+                    localField: "_id",
                 },
             },
             {
@@ -180,6 +196,42 @@ export const updateForeignAgentService = async (id: any, data: any) => {
         }
 
         return await updateForeignAgentRepo({ _id: new ObjectId(id) }, data);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getAllForeignAgentService = async (data: any) => {
+    try {
+        const { filters } = data;
+        const pipeline: any[] = [];
+
+        if (filters?.status) {
+            pipeline.push({
+                $match: {
+                    status: filters.status,
+                },
+            });
+        }
+
+        pipeline.push(
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "country",
+                    foreignField: "_id",
+                    as: "countryData",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$countryData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            }
+        );
+        return await aggregateForeignAgentRepo(pipeline);
     } catch (e) {
         console.error(e);
         throw e;
