@@ -55,7 +55,14 @@ const generateForeignAgentId = async () => {
 
 export const getPagedForeignAgentService = async (data: any) => {
     try {
-        const { pageSize, page, searchQuery, status } = data.filters;
+        const {
+            pageSize,
+            page,
+            searchQuery,
+            status,
+            sortField = "createdAt",
+            sortOrder = "desc",
+        } = data.filters;
         const skip = (page - 1) * pageSize;
         const matchStage: any = {};
 
@@ -77,6 +84,12 @@ export const getPagedForeignAgentService = async (data: any) => {
         if (Object.keys(matchStage).length > 0) {
             pipeline.push({ $match: matchStage });
         }
+
+        pipeline.push({
+            $sort: {
+                [sortField]: sortOrder === "asc" ? 1 : -1,
+            },
+        });
 
         pipeline.push(
             { $sort: { createdAt: -1 } },

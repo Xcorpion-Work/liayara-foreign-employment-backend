@@ -158,4 +158,14 @@ export const messages = {
     JOB_ORDERS_FETCH_FAILED: "Failed to fetch Job Orders",
     JOB_ORDER_UPDATE_SUCCESS: "Job Order updated successfully",
     JOB_ORDER_UPDATE_FAILED: "Failed to update Job Order",
+
+    // local agent
+    LOCAL_AGENT_CREATE_SUCCESS: "Local agent created successfully",
+    LOCAL_AGENT_CREATE_FAILED: "Failed to create local agent",
+    LOCAL_AGENTS_FETCH_SUCCESS: "Local agents fetched successfully",
+    LOCAL_AGENTS_FETCH_FAILED: "Failed to fetch local agents",
+    LOCAL_AGENT_FETCH_SUCCESS: "Local agent fetched successfully",
+    LOCAL_AGENT_FETCH_FAILED: "Failed to fetch local agent",
+    LOCAL_AGENT_UPDATE_SUCCESS: "Local agent updated successfully",
+    LOCAL_AGENT_UPDATE_FAILED: "Failed to update local agent",
 };

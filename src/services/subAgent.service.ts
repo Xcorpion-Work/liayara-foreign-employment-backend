@@ -54,7 +54,14 @@ const generateSubAgentId = async () => {
 
 export const getPagedSubAgentService = async (data: any) => {
     try {
-        const { pageSize, page, searchQuery, status } = data.filters;
+        const {
+            pageSize,
+            page,
+            searchQuery,
+            status,
+            sortField = "createdAt",
+            sortOrder = "desc",
+        } = data.filters;
         const skip = (page - 1) * pageSize;
         const matchStage: any = {};
 
@@ -87,16 +94,13 @@ export const getPagedSubAgentService = async (data: any) => {
             pipeline.push({ $match: matchStage });
         }
 
-        pipeline.push(
-            {
-                $sort: { createdAt: -1 },
+        pipeline.push({
+            $sort: {
+                [sortField]: sortOrder === "asc" ? 1 : -1,
             },
-            // {
-            //     as: "passengers",
-            //     from: "passengers",
-            //     foreignField: "subAgent",
-            //     localField: "_id"
-            // },
+        });
+
+        pipeline.push(
             {
                 $facet: {
                     metadata: [{ $count: "total" }],
