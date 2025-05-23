@@ -32,4 +32,8 @@ export const errors = {
     INVALID_JOB_ORDER: "Invalid job order",
     CANNOT_EDIT_ACTIVE_OR_EXPIRE_JOB_ORDERS:
         "Cannot edit active or expired job orders",
+    LOCAL_AGENT_ALREADY_EXIST: "Local agent already exists",
+    INVALID_LOCAL_AGENT: "Local agent is invalid",
+    LOCAL_AGENT_CANNOT_BE_DEACTIVATED:
+        "Local agent cannot be deactivated because of related passengers",
 };

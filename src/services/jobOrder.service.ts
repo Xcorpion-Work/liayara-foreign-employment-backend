@@ -61,8 +61,15 @@ const generateJobOrderId = async () => {
 
 export const getPagedJobOrderService = async (data: any) => {
     try {
-        const { pageSize, page, searchQuery, foreignAgent, jobOrderStatus } =
-            data.filters;
+        const {
+            pageSize,
+            page,
+            searchQuery,
+            foreignAgent,
+            jobOrderStatus,
+            sortField = "createdAt",
+            sortOrder = "desc",
+        } = data.filters;
         const skip = (page - 1) * pageSize;
         const matchStage: any = {};
 
@@ -91,6 +98,12 @@ export const getPagedJobOrderService = async (data: any) => {
         if (Object.keys(matchStage).length > 0) {
             pipeline.push({ $match: matchStage });
         }
+
+        pipeline.push({
+            $sort: {
+                [sortField]: sortOrder === "asc" ? 1 : -1,
+            },
+        });
 
         pipeline.push(
             {
