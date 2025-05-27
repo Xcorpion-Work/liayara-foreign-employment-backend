@@ -7,7 +7,10 @@ import {
 } from "../repositories/localAgent.repository";
 import { errors } from "../constants/errors";
 import mongoose from "mongoose";
-import { findAllPassengerRepo } from "../repositories/passenger.repository";
+import {
+    aggregatePassengerRepo,
+    findAllPassengerRepo,
+} from "../repositories/passenger.repository";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -92,7 +95,6 @@ export const getPagedLocalAgentService = async (data: any) => {
         });
 
         pipeline.push(
-            { $sort: { createdAt: -1 } },
             {
                 $facet: {
                     metadata: [{ $count: "total" }],
@@ -115,7 +117,7 @@ export const getPagedLocalAgentService = async (data: any) => {
             }
         );
 
-        const localAgents = await aggregateLocalAgentRepo(pipeline);
+        const localAgents = await aggregatePassengerRepo(pipeline);
         return localAgents[0] || { total: 0, pageIndex: page, result: [] };
     } catch (e) {
         console.error(e);

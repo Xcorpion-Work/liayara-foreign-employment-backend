@@ -2,29 +2,34 @@ import { ISubAgent } from "./subAgent.model";
 import { IJobCatalog } from "./jobCatalog.model";
 import { ICountry } from "./country.model";
 import { Schema, model, Document } from "mongoose";
+import { ILocalAgent } from "./localAgent.model";
 
 export interface IPassenger extends Document {
     passengerId: string;
     subAgent: ISubAgent;
+    localAgent: ILocalAgent;
     name: string;
+    nic: string;
     phone: string;
     altPhone: string;
     email: string;
     address: string;
     gender: string;
-    birthday: string;
+    birthday: Date;
+    religion: string;
     maritalStatus: string;
-    noOfChildren: number;
+    numberOfChildren: number;
     height: number;
     weight: number;
     covidVaccinated: boolean;
     abroadExperience: boolean;
-    desiredJob: IJobCatalog;
-    desiredCountry: ICountry;
+    desiredJobs: IJobCatalog[];
+    desiredCountries: ICountry[];
     agreedCommission: number;
     agreedFee: number;
     salary: number;
     passengerStatus: string;
+    isCompletedDetails: boolean;
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -40,9 +45,17 @@ const PassengerSchema = new Schema<IPassenger>(
             type: Schema.Types.ObjectId,
             ref: "SubAgent",
         },
+        localAgent: {
+            type: Schema.Types.ObjectId,
+            ref: "LocalAgent",
+        },
         name: {
             type: Schema.Types.String,
             required: [true, "Name is required"],
+        },
+        nic: {
+            type: Schema.Types.String,
+            required: [true, "NIC is required"],
         },
         phone: {
             type: Schema.Types.String,
@@ -65,7 +78,7 @@ const PassengerSchema = new Schema<IPassenger>(
             enum: ["Male", "Female"],
         },
         birthday: {
-            type: Schema.Types.String,
+            type: Schema.Types.Date,
             required: [true, "Birthday is required"],
         },
         maritalStatus: {
@@ -73,7 +86,7 @@ const PassengerSchema = new Schema<IPassenger>(
             required: [true, "Marital status is required"],
             enum: ["Single", "Married", "Divorced", "Widowed"],
         },
-        noOfChildren: {
+        numberOfChildren: {
             type: Schema.Types.Number,
         },
         height: {
@@ -92,14 +105,18 @@ const PassengerSchema = new Schema<IPassenger>(
             type: Schema.Types.Boolean,
             default: false,
         },
-        desiredJob: {
-            type: Schema.Types.ObjectId,
-            ref: "JobCatalog",
-        },
-        desiredCountry: {
-            type: Schema.Types.ObjectId,
-            ref: "Country",
-        },
+        desiredJobs: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "JobCatalog",
+            },
+        ],
+        desiredCountries: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Country",
+            },
+        ],
         agreedCommission: {
             type: Schema.Types.Number,
         },
@@ -108,10 +125,13 @@ const PassengerSchema = new Schema<IPassenger>(
         },
         salary: {
             type: Schema.Types.Number,
-            required: [true, "Salary is required"],
         },
         passengerStatus: {
             type: Schema.Types.String,
+        },
+        isCompletedDetails: {
+            type: Schema.Types.Boolean,
+            default: false,
         },
         status: {
             type: Schema.Types.Boolean,

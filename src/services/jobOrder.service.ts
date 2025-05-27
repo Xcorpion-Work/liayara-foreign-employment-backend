@@ -107,11 +107,6 @@ export const getPagedJobOrderService = async (data: any) => {
 
         pipeline.push(
             {
-                $sort: {
-                    createdAt: -1,
-                },
-            },
-            {
                 $lookup: {
                     as: "foreignAgentData",
                     from: "foreign_agents",
