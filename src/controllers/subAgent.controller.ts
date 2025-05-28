@@ -2,12 +2,12 @@ import { IRequest, IResponse } from "../interfaces/dto";
 import { sendResponse } from "../helpers/sendResponse";
 import { messages } from "../constants/messages";
 import {
-    createSubAgentService, getAllSubAgentsService,
+    createSubAgentService,
+    getAllSubAgentsService,
     getOneAggregateSubAgentService,
     getPagedSubAgentService,
     updateSubAgentService,
 } from "../services/subAgent.service";
-import { getAllLocalAgentsService } from "../services/localAgent.service";
 
 export const createSubAgentController = async (
     req: IRequest,
