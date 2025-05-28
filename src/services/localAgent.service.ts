@@ -1,16 +1,14 @@
 import {
     aggregateLocalAgentRepo,
     createLocalAgentRepo,
+    findAllLocalAgentRepo,
     findLastAddedLocalAgentRepo,
     findOneLocalAgentRepo,
     updateLocalAgentRepo,
 } from "../repositories/localAgent.repository";
 import { errors } from "../constants/errors";
 import mongoose from "mongoose";
-import {
-    aggregatePassengerRepo,
-    findAllPassengerRepo,
-} from "../repositories/passenger.repository";
+import { findAllPassengerRepo } from "../repositories/passenger.repository";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -117,7 +115,7 @@ export const getPagedLocalAgentService = async (data: any) => {
             }
         );
 
-        const localAgents = await aggregatePassengerRepo(pipeline);
+        const localAgents = await aggregateLocalAgentRepo(pipeline);
         return localAgents[0] || { total: 0, pageIndex: page, result: [] };
     } catch (e) {
         console.error(e);
@@ -167,6 +165,16 @@ export const updateLocalAgentService = async (id: any, data: any) => {
         }
 
         return await updateLocalAgentRepo({ _id: new ObjectId(id) }, data);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getAllLocalAgentsService = async (data: any) => {
+    try {
+        const { filters } = data;
+        return findAllLocalAgentRepo(filters);
     } catch (e) {
         console.error(e);
         throw e;

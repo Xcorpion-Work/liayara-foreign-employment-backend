@@ -2,7 +2,7 @@ import { IRequest, IResponse } from "../interfaces/dto";
 import { sendResponse } from "../helpers/sendResponse";
 import { messages } from "../constants/messages";
 import {
-    createLocalAgentService,
+    createLocalAgentService, getAllLocalAgentsService,
     getOneAggregateLocalAgentService,
     getPagedLocalAgentService,
     updateLocalAgentService,
@@ -99,6 +99,30 @@ export const updateLocalAgentController = async (
             res,
             500,
             messages.LOCAL_AGENT_UPDATE_FAILED,
+            null,
+            error.message
+        );
+    }
+};
+
+export const getAllLocalAgentsController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const body = req.body;
+        const response = await getAllLocalAgentsService(body);
+        return sendResponse(
+            res,
+            200,
+            messages.LOCAL_AGENTS_FETCH_SUCCESS,
+            response
+        );
+    } catch (error: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.LOCAL_AGENTS_FETCH_FAILED,
             null,
             error.message
         );

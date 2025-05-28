@@ -81,6 +81,10 @@ const PassengerSchema = new Schema<IPassenger>(
             type: Schema.Types.Date,
             required: [true, "Birthday is required"],
         },
+        religion: {
+            type: Schema.Types.String,
+            required: [true, "Religion is required"],
+        },
         maritalStatus: {
             type: Schema.Types.String,
             required: [true, "Marital status is required"],

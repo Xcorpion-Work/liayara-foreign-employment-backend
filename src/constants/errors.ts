@@ -37,4 +37,5 @@ export const errors = {
     LOCAL_AGENT_CANNOT_BE_DEACTIVATED:
         "Local agent cannot be deactivated because of related passengers",
     PASSENGER_ALREADY_EXIST: "Passenger is already exist by NIC",
+    INVALID_PASSENGER: "Invalid passenger"
 };

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-    createSubAgentController,
+    createSubAgentController, getAllSubAgentsController,
     getOneSubAgentController,
     getPagedSubAgentController,
     updateSubAgentController,
@@ -10,6 +10,7 @@ import authMiddleware from "../middlewares/auth.middleware";
 const subAgentRoute = Router();
 
 subAgentRoute.post("/sub-agent", authMiddleware(), createSubAgentController);
+subAgentRoute.post("/sub-agents", authMiddleware(), getAllSubAgentsController);
 subAgentRoute.post(
     "/paged-sub-agents",
     authMiddleware(),

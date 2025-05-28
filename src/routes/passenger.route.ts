@@ -1,7 +1,10 @@
 import { Router } from "express";
-import { createPassengerController } from "../controllers/passenger.controller";
+import {
+    createPassengerController,
+    getOnePassengerController,
+    getPagedPassengerController, updatePassengerController,
+} from "../controllers/passenger.controller";
 import authMiddleware from "../middlewares/auth.middleware";
-import { getPagedLocalAgentController } from "../controllers/localAgent.controller";
 import { CREATE_PASSENGER, VIEW_PASSENGER } from "../constants/permissions";
 
 const passengerRoute = Router();
@@ -14,7 +17,9 @@ passengerRoute.post(
 passengerRoute.post(
     "/paged-passengers",
     authMiddleware([VIEW_PASSENGER]),
-    getPagedLocalAgentController
+    getPagedPassengerController
 );
+passengerRoute.get("/passenger/:id", authMiddleware(), getOnePassengerController);
+passengerRoute.put("/passenger/:id", authMiddleware(), updatePassengerController);
 
 export default passengerRoute;

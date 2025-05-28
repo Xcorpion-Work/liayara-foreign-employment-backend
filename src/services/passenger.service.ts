@@ -3,6 +3,7 @@ import {
     createPassengerRepo,
     findLastAddedPassengerRepo,
     findOnePassengerRepo,
+    updatePassengerRepo,
 } from "../repositories/passenger.repository";
 import { errors } from "../constants/errors";
 import { findAllPassengerStatusRepo } from "../repositories/passengerStatus.repository";
@@ -32,10 +33,22 @@ export const createPassengerService = async (data: any) => {
         data.localAgent = data.localAgent
             ? new ObjectId(data.localAgent)
             : null;
+        data.desiredJobs = data.desiredJobs.map((j: any) => new ObjectId(j));
+        data.desiredCountries = data.desiredCountries.map(
+            (c: any) => new ObjectId(c)
+        );
         data.covidVaccinated = data.covidVaccinated === "Yes";
         data.abroadExperience = data.abroadExperience === "Yes";
-        data.passengerStatus = firstStatus.name;
-        console.log("data", data);
+        data.passengerStatus = firstStatus.code;
+        const { height, weight, desiredJobs, desiredCountries } = data;
+        if (
+            height !== 0 ||
+            weight !== 0 ||
+            desiredJobs.length !== 0 ||
+            desiredCountries.length !== 0
+        ) {
+            data.isCompletedDetails = true;
+        }
         return await createPassengerRepo(data);
     } catch (e) {
         console.error(e);
@@ -130,6 +143,73 @@ export const getPagedPassengerService = async (data: any) => {
 
         const passengers = await aggregatePassengerRepo(pipeline);
         return passengers[0] || { total: 0, pageIndex: page, result: [] };
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getOnePassengerService = async (id: any) => {
+    try {
+        const pipeline = [
+            {
+                $match: {
+                    _id: new ObjectId(id),
+                },
+            },
+            // {
+            //     as: "passengers",
+            //     from: "passengers",
+            //     foreignField: "subAgent",
+            //     localField: "_id"
+            // },
+        ];
+
+        const result = await aggregatePassengerRepo(pipeline);
+        return result[0];
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const updatePassengerService = async (id: any, data: any) => {
+    try {
+        const passenger = await findOnePassengerRepo({ _id: new ObjectId(id) });
+        if (!passenger) {
+            throw new Error(errors.INVALID_PASSENGER);
+        }
+
+        if (data.status === false || data.status === true) {
+            return await updatePassengerRepo({ _id: new ObjectId(id) }, data);
+        }
+
+        const existing: any = await findOnePassengerRepo({ nic: data.nic });
+        if (existing && existing._id.toString() !== id) {
+            throw new Error(errors.PASSENGER_ALREADY_EXIST);
+        }
+
+        data.covidVaccinated = data.covidVaccinated === "Yes";
+        data.abroadExperience = data.abroadExperience === "Yes";
+        data.subAgent = data.subAgent ? new ObjectId(data.subAgent) : null;
+        data.localAgent = data.localAgent
+            ? new ObjectId(data.localAgent)
+            : null;
+        data.desiredJobs = data.desiredJobs.map((j: any) => new ObjectId(j));
+        data.desiredCountries = data.desiredCountries.map(
+            (c: any) => new ObjectId(c)
+        );
+        const { height, weight, desiredJobs, desiredCountries } = data;
+        if (
+            height !== 0 ||
+            weight !== 0 ||
+            desiredJobs.length !== 0 ||
+            desiredCountries.length !== 0
+        ) {
+            data.isCompletedDetails = true;
+        }
+
+        return await updatePassengerRepo({ _id: new ObjectId(id) }, data);
     } catch (e) {
         console.error(e);
         throw e;

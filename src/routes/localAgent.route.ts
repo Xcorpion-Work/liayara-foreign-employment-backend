@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-    createLocalAgentController,
+    createLocalAgentController, getAllLocalAgentsController,
     getOneLocalAgentController,
     getPagedLocalAgentController,
     updateLocalAgentController,
@@ -23,6 +23,11 @@ localAgentRoute.post(
     "/paged-local-agents",
     authMiddleware([VIEW_LOCAL_AGENT]),
     getPagedLocalAgentController
+);
+localAgentRoute.post(
+    "/local-agents",
+    authMiddleware([VIEW_LOCAL_AGENT]),
+    getAllLocalAgentsController
 );
 localAgentRoute.get(
     "/local-agent/:id",
