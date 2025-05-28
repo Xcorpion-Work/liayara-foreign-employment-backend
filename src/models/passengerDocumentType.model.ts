@@ -3,6 +3,7 @@ import { model, Schema } from "mongoose";
 export interface IPassengerDocumentType extends Document {
     name: string;
     description: string;
+    type: string;
     required: boolean;
     status: boolean;
     createdAt: Date;
@@ -19,6 +20,10 @@ const PassengerDocumentTypeSchema: Schema = new Schema<IPassengerDocumentType>(
         description: {
             type: Schema.Types.String,
             required: [true, "Description is required"],
+        },
+        type: {
+            type: Schema.Types.String,
+            required: [true, "Type is required"],
         },
         required: {
             type: Schema.Types.Boolean,

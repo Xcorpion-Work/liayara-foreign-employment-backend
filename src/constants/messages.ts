@@ -168,4 +168,14 @@ export const messages = {
     LOCAL_AGENT_FETCH_FAILED: "Failed to fetch local agent",
     LOCAL_AGENT_UPDATE_SUCCESS: "Local agent updated successfully",
     LOCAL_AGENT_UPDATE_FAILED: "Failed to update local agent",
+
+    // passenger
+    PASSENGER_CREATE_SUCCESS: "Passenger created successfully",
+    PASSENGER_CREATE_FAILED: "Failed to create passenger",
+    PASSENGERS_FETCH_SUCCESS: "Passengers fetched successfully",
+    PASSENGERS_FETCH_FAILED: "Failed to fetch passengers",
+    PASSENGER_FETCH_SUCCESS: "Passenger fetched successfully",
+    PASSENGER_FETCH_FAILED: "Failed to fetch passenger",
+    PASSENGER_UPDATE_SUCCESS: "Passenger updated successfully",
+    PASSENGER_UPDATE_FAILED: "Failed to update passenger",
 };

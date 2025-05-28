@@ -1,6 +1,7 @@
 import {
     aggregateLocalAgentRepo,
     createLocalAgentRepo,
+    findAllLocalAgentRepo,
     findLastAddedLocalAgentRepo,
     findOneLocalAgentRepo,
     updateLocalAgentRepo,
@@ -92,7 +93,6 @@ export const getPagedLocalAgentService = async (data: any) => {
         });
 
         pipeline.push(
-            { $sort: { createdAt: -1 } },
             {
                 $facet: {
                     metadata: [{ $count: "total" }],
@@ -165,6 +165,16 @@ export const updateLocalAgentService = async (id: any, data: any) => {
         }
 
         return await updateLocalAgentRepo({ _id: new ObjectId(id) }, data);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getAllLocalAgentsService = async (data: any) => {
+    try {
+        const { filters } = data;
+        return findAllLocalAgentRepo(filters);
     } catch (e) {
         console.error(e);
         throw e;

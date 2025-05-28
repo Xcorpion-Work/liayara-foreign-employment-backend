@@ -1,6 +1,7 @@
 import {
     aggregateSubAgentRepo,
     createSubAgentRepo,
+    findAllSubAgentRepo,
     findLastAddedSubAgentRepo,
     findOneSubAgentRepo,
     updateSubAgentRepo,
@@ -187,6 +188,16 @@ export const updateSubAgentService = async (id: any, data: any) => {
         }
 
         return await updateSubAgentRepo({ _id: new ObjectId(id) }, data);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const getAllSubAgentsService = async (data: any) => {
+    try {
+        const { filters } = data;
+        return findAllSubAgentRepo(filters);
     } catch (e) {
         console.error(e);
         throw e;

@@ -1,32 +1,42 @@
 import { Router } from "express";
 import {
-    createLocalAgentController,
+    createLocalAgentController, getAllLocalAgentsController,
     getOneLocalAgentController,
     getPagedLocalAgentController,
     updateLocalAgentController,
 } from "../controllers/localAgent.controller";
 import authMiddleware from "../middlewares/auth.middleware";
+import {
+    CREATE_LOCAL_AGENT,
+    EDIT_LOCAL_AGENT,
+    VIEW_LOCAL_AGENT,
+} from "../constants/permissions";
 
 const localAgentRoute = Router();
 
 localAgentRoute.post(
     "/local-agent",
-    authMiddleware(),
+    authMiddleware([CREATE_LOCAL_AGENT]),
     createLocalAgentController
 );
 localAgentRoute.post(
     "/paged-local-agents",
-    authMiddleware(),
+    authMiddleware([VIEW_LOCAL_AGENT]),
     getPagedLocalAgentController
+);
+localAgentRoute.post(
+    "/local-agents",
+    authMiddleware([VIEW_LOCAL_AGENT]),
+    getAllLocalAgentsController
 );
 localAgentRoute.get(
     "/local-agent/:id",
-    authMiddleware(),
+    authMiddleware([VIEW_LOCAL_AGENT]),
     getOneLocalAgentController
 );
 localAgentRoute.put(
     "/local-agent/:id",
-    authMiddleware(),
+    authMiddleware([EDIT_LOCAL_AGENT]),
     updateLocalAgentController
 );
 

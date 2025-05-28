@@ -9,8 +9,11 @@ import {
 import authMiddleware from "../middlewares/auth.middleware";
 import {
     CREATE_FOREIGN_AGENT,
+    CREATE_JOB_ORDER,
     EDIT_FOREIGN_AGENT,
+    EDIT_JOB_ORDER,
     VIEW_FOREIGN_AGENT,
+    VIEW_JOB_ORDER,
 } from "../constants/permissions";
 import {
     createJobOrderController,
@@ -49,27 +52,27 @@ foreignAgentRoute.put(
 );
 foreignAgentRoute.post(
     "/job-order",
-    authMiddleware([CREATE_FOREIGN_AGENT]),
+    authMiddleware([CREATE_JOB_ORDER]),
     createJobOrderController
 );
 foreignAgentRoute.post(
     "/paged-job-orders",
-    authMiddleware([VIEW_FOREIGN_AGENT]),
+    authMiddleware([VIEW_JOB_ORDER]),
     getPagedJobOrderController
 );
 foreignAgentRoute.post(
     "/job-order",
-    authMiddleware([VIEW_FOREIGN_AGENT]),
+    authMiddleware([VIEW_JOB_ORDER]),
     getAllJobOrderController
 );
 foreignAgentRoute.get(
     "/job-order/:id",
-    authMiddleware([VIEW_FOREIGN_AGENT]),
+    authMiddleware([VIEW_JOB_ORDER]),
     getOneJobOrderController
 );
 foreignAgentRoute.put(
     "/job-order/:id",
-    authMiddleware([EDIT_FOREIGN_AGENT]),
+    authMiddleware([EDIT_JOB_ORDER]),
     updateJobOrderController
 );
 
