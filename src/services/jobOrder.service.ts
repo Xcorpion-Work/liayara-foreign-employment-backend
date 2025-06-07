@@ -6,6 +6,7 @@ import {
     findAllJobOrderRepo,
     findLastAddedJobOrderRepo,
     findOneJobOrderRepo,
+    updateJobOrderRepo,
 } from "../repositories/jobOrder.repository";
 
 export const createJobOrderService = async (data: any) => {
@@ -27,6 +28,10 @@ export const createJobOrderService = async (data: any) => {
         );
 
         data.jobOrderId = await generateJobOrderId();
+        data.jobs = data.jobs.map((j: any) => ({
+            ...j,
+            leftVacancies: j.approvedVacancies,
+        }));
 
         return await createJobOrderRepo(data);
     } catch (e) {
@@ -156,10 +161,143 @@ export const getPagedJobOrderService = async (data: any) => {
 
 export const getAllJobOrderService = async (data: any) => {
     try {
-        const { filters } = data;
+        const { filters = {}, selectJobOrderForPassenger } = data;
+        const { desiredJobs = [], desiredCountries = [] } = filters;
+
+        if (selectJobOrderForPassenger) {
+            const desiredJobIds = desiredJobs.map(
+                (id: string) => new ObjectId(id)
+            );
+            const desiredCountryIds = desiredCountries.map(
+                (id: string) => new ObjectId(id)
+            );
+
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: "foreign_agents",
+                        localField: "foreignAgent",
+                        foreignField: "_id",
+                        as: "foreignAgentData",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$foreignAgentData",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "countries",
+                        localField: "foreignAgentData.country",
+                        foreignField: "_id",
+                        as: "countryData",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$countryData",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$jobs",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "job_catalogs",
+                        localField: "jobs.jobCatalogId",
+                        foreignField: "_id",
+                        as: "jobs.jobCatalogData",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$jobs.jobCatalogData",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                { $in: ["$jobs.jobCatalogId", desiredJobIds] },
+                                {
+                                    $in: [
+                                        "$foreignAgentData.country",
+                                        desiredCountryIds,
+                                    ],
+                                },
+                                { $eq: ["$status", true] },
+                                { $eq: ["$jobOrderStatus", "ACTIVE"] },
+                            ],
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: "$_id",
+                        doc: { $first: "$$ROOT" },
+                        jobs: { $push: "$jobs" },
+                    },
+                },
+                {
+                    $replaceRoot: {
+                        newRoot: {
+                            $mergeObjects: ["$doc", { jobs: "$jobs" }],
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        foreignAgent: 1,
+                        foreignAgentData: 1,
+                        status: 1,
+                        country: 1,
+                        countryData: 1,
+                        jobCatalog: 1,
+                        jobs: {
+                            $filter: {
+                                input: "$jobs",
+                                as: "job",
+                                cond: {
+                                    $in: ["$$job.jobCatalogId", desiredJobIds],
+                                },
+                            },
+                        },
+                    },
+                },
+            ];
+
+            const result = await aggregateJobOrderRepo(pipeline);
+            console.log("result", result);
+
+            const customizedJobOrders = result.flatMap((jo: any) =>
+                jo.jobs.map((j: any) => ({
+                    _id: jo._id,
+                    foreignAgent: jo.foreignAgent,
+                    foreignAgentData: jo.foreignAgentData,
+                    status: jo.status,
+                    approvedVacancies: j.approvedVacancies,
+                    jobCatalogId: j.jobCatalogId,
+                    jobCatalogData: j.jobCatalogData,
+                    salary: j.salary,
+                    vacancies: j.vacancies,
+                    countryData: jo.countryData,
+                }))
+            );
+
+            return customizedJobOrders;
+        }
+
         return await findAllJobOrderRepo(filters);
     } catch (e) {
-        console.error(e);
+        console.error("Error in getAllJobOrderService:", e);
         throw e;
     }
 };
@@ -250,11 +388,12 @@ export const getOneAggregateJobOrderService = async (id: any) => {
 export const updateJobOrderService = async (id: any, data: any) => {
     try {
         const { issuedDate, expiredDate } = data;
+
         const existJobOrder: any = await findOneJobOrderRepo({
             _id: new ObjectId(id),
         });
 
-        if (existJobOrder) {
+        if (!existJobOrder) {
             throw new Error(errors.INVALID_JOB_ORDER);
         }
 
@@ -269,6 +408,13 @@ export const updateJobOrderService = async (id: any, data: any) => {
             issuedDate,
             expiredDate
         );
+
+        data.jobs = data.jobs.map((j: any) => ({
+            ...j,
+            leftVacancies: j.approvedVacancies,
+        }));
+
+        return await updateJobOrderRepo(new ObjectId(id), data);
     } catch (e) {
         console.error(e);
         throw e;

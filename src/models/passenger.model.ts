@@ -3,6 +3,7 @@ import { IJobCatalog } from "./jobCatalog.model";
 import { ICountry } from "./country.model";
 import { Schema, model, Document } from "mongoose";
 import { ILocalAgent } from "./localAgent.model";
+import { IJobOrder } from "./jobOrder.model";
 
 export interface IPassenger extends Document {
     passengerId: string;
@@ -25,11 +26,13 @@ export interface IPassenger extends Document {
     abroadExperience: boolean;
     desiredJobs: IJobCatalog[];
     desiredCountries: ICountry[];
+    passengerStatus: string;
+    isCompletedDetails: boolean;
+    selectedJobOrderId: IJobOrder;
+    selectedJobCatalogId: IJobCatalog;
     agreedCommission: number;
     agreedFee: number;
     salary: number;
-    passengerStatus: string;
-    isCompletedDetails: boolean;
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -67,7 +70,6 @@ const PassengerSchema = new Schema<IPassenger>(
         },
         email: {
             type: Schema.Types.String,
-            unique: true,
         },
         address: {
             type: Schema.Types.String,
@@ -121,6 +123,21 @@ const PassengerSchema = new Schema<IPassenger>(
                 ref: "Country",
             },
         ],
+        passengerStatus: {
+            type: Schema.Types.String,
+        },
+        isCompletedDetails: {
+            type: Schema.Types.Boolean,
+            default: false,
+        },
+        selectedJobOrderId: {
+            type: Schema.Types.ObjectId,
+            ref: "JobOrder",
+        },
+        selectedJobCatalogId: {
+            type: Schema.Types.ObjectId,
+            ref: "JobCatalog",
+        },
         agreedCommission: {
             type: Schema.Types.Number,
         },
@@ -129,13 +146,6 @@ const PassengerSchema = new Schema<IPassenger>(
         },
         salary: {
             type: Schema.Types.Number,
-        },
-        passengerStatus: {
-            type: Schema.Types.String,
-        },
-        isCompletedDetails: {
-            type: Schema.Types.Boolean,
-            default: false,
         },
         status: {
             type: Schema.Types.Boolean,

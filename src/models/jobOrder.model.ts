@@ -47,6 +47,7 @@ const JobOrderSchema = new Schema<IJobOrder>(
                     vacancies: { type: Number, required: true },
                     approvedVacancies: { type: Number, required: true },
                     salary: { type: Number, required: true },
+                    leftVacancies: { type: Number, required: true },
                 },
             ],
         },

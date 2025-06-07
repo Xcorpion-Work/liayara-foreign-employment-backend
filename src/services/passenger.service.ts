@@ -86,6 +86,7 @@ export const getPagedPassengerService = async (data: any) => {
             pageSize,
             page,
             searchQuery,
+            passengerStatus,
             status,
             sortField = "createdAt",
             sortOrder = "desc",
@@ -98,12 +99,15 @@ export const getPagedPassengerService = async (data: any) => {
                 { name: { $regex: searchQuery, $options: "i" } },
                 { passengerId: { $regex: searchQuery, $options: "i" } },
                 { phone: { $regex: searchQuery, $options: "i" } },
-                { email: { $regex: searchQuery, $options: "i" } },
             ];
         }
 
         if (status) {
             matchStage.status = status === "ACTIVE";
+        }
+
+        if (passengerStatus) {
+            matchStage.passengerStatus = passengerStatus;
         }
 
         const pipeline: any[] = [];
@@ -157,12 +161,64 @@ export const getOnePassengerService = async (id: any) => {
                     _id: new ObjectId(id),
                 },
             },
-            // {
-            //     as: "passengers",
-            //     from: "passengers",
-            //     foreignField: "subAgent",
-            //     localField: "_id"
-            // },
+            {
+                $lookup: {
+                    from: "sub_agents",
+                    localField: "subAgent",
+                    foreignField: "_id",
+                    as: "subAgentData",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$subAgentData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "local_agents",
+                    localField: "localAgent",
+                    foreignField: "_id",
+                    as: "localAgentData",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$localAgentData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "job_catalogs",
+                    localField: "desiredJobs",
+                    foreignField: "_id",
+                    as: "desiredJobsData",
+                },
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "desiredCountries",
+                    foreignField: "_id",
+                    as: "desiredCountriesData",
+                },
+            },
+            {
+                $lookup: {
+                    as: "passengerStatusData",
+                    from: "passenger_statuses",
+                    foreignField: "code",
+                    localField: "passengerStatus",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passengerStatusData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
         ];
 
         const result = await aggregatePassengerRepo(pipeline);

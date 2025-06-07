@@ -58,7 +58,7 @@ const settingsRoute = Router();
 settingsRoute.post("/passenger-status", createPassengerStatusController);
 settingsRoute.post(
     "/passenger-statuses",
-    authMiddleware([VIEW_PASSENGER_STATUS]),
+    authMiddleware(),
     getAllPassengerStatusController
 );
 settingsRoute.put(

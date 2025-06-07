@@ -1,5 +1,4 @@
 import { Passenger } from "../models/passenger.model";
-import { LocalAgent } from "../models/localAgent.model";
 
 export const createPassengerRepo = (data: any) => {
     return new Passenger(data).save();
@@ -22,5 +21,5 @@ export const aggregatePassengerRepo = (pipeline: any) => {
 };
 
 export const findLastAddedPassengerRepo = () => {
-    return LocalAgent.findOne().sort({ createdAt: -1 });
+    return Passenger.findOne().sort({ createdAt: -1 });
 };
