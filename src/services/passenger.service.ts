@@ -1,54 +1,39 @@
 import {
     aggregatePassengerRepo,
     createPassengerRepo,
+    findAllPassengerRepo,
     findLastAddedPassengerRepo,
     findOnePassengerRepo,
     updatePassengerRepo,
 } from "../repositories/passenger.repository";
 import { errors } from "../constants/errors";
-import { findAllPassengerStatusRepo } from "../repositories/passengerStatus.repository";
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 export const createPassengerService = async (data: any) => {
     try {
-        const { nic } = data;
-        const existingPassenger = await findOnePassengerRepo({ nic: nic });
-        console.log(existingPassenger);
-        const passengerStatus: any[] = await findAllPassengerStatusRepo({
-            status: true,
+        const { nic, phone, email } = data;
+        const existingPassengersByNic = await findAllPassengerRepo({
+            nic: nic,
         });
-        const sortedStatus = passengerStatus.sort(
-            (a, b) => a.sequence - b.sequence
-        );
-        const firstStatus = sortedStatus[0];
+        const existingPassengersByPhone = await findAllPassengerRepo({
+            phone: phone,
+        });
+        const existingPassengersByEmail = await findAllPassengerRepo({
+            email: email,
+        });
 
-        if (existingPassenger) {
+        if (
+            (existingPassengersByNic.length > 0,
+            existingPassengersByPhone.length > 0,
+            existingPassengersByEmail.length > 0)
+        ) {
             throw new Error(errors.PASSENGER_ALREADY_EXIST);
         }
 
         data.passengerId = await generatePassengerId();
-        data.subAgent = data.subAgent ? new ObjectId(data.subAgent) : null;
-        data.localAgent = data.localAgent
-            ? new ObjectId(data.localAgent)
-            : null;
-        data.desiredJobs = data.desiredJobs.map((j: any) => new ObjectId(j));
-        data.desiredCountries = data.desiredCountries.map(
-            (c: any) => new ObjectId(c)
-        );
-        data.covidVaccinated = data.covidVaccinated === "Yes";
-        data.abroadExperience = data.abroadExperience === "Yes";
-        data.passengerStatus = firstStatus.code;
-        const { height, weight, desiredJobs, desiredCountries } = data;
-        if (
-            height !== 0 ||
-            weight !== 0 ||
-            desiredJobs.length !== 0 ||
-            desiredCountries.length !== 0
-        ) {
-            data.isCompletedDetails = true;
-        }
+
         return await createPassengerRepo(data);
     } catch (e) {
         console.error(e);

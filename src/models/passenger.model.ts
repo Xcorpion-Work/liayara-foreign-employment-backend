@@ -73,6 +73,7 @@ const PassengerSchema = new Schema<IPassenger>(
         },
         address: {
             type: Schema.Types.String,
+            required: [true, "Address is required"],
         },
         gender: {
             type: Schema.Types.String,
@@ -89,7 +90,6 @@ const PassengerSchema = new Schema<IPassenger>(
         },
         maritalStatus: {
             type: Schema.Types.String,
-            required: [true, "Marital status is required"],
             enum: ["Single", "Married", "Divorced", "Widowed"],
         },
         numberOfChildren: {
@@ -97,11 +97,9 @@ const PassengerSchema = new Schema<IPassenger>(
         },
         height: {
             type: Schema.Types.Number,
-            required: [true, "Height is required"],
         },
         weight: {
             type: Schema.Types.Number,
-            required: [true, "Weight is required"],
         },
         covidVaccinated: {
             type: Schema.Types.Boolean,
