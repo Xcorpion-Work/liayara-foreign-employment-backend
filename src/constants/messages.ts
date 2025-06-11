@@ -178,4 +178,6 @@ export const messages = {
     PASSENGER_FETCH_FAILED: "Failed to fetch passenger",
     PASSENGER_UPDATE_SUCCESS: "Passenger updated successfully",
     PASSENGER_UPDATE_FAILED: "Failed to update passenger",
+    PASSENGER_JOBS_FETCH_FAILED: "Passenger jobs fetch failed",
+    PASSENGER_JOBS_FETCH_SUCCESS: "Passenger jobs fetch success",
 };

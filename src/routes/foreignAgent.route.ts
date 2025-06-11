@@ -61,7 +61,7 @@ foreignAgentRoute.post(
     getPagedJobOrderController
 );
 foreignAgentRoute.post(
-    "/job-order",
+    "/job-orders",
     authMiddleware([VIEW_JOB_ORDER]),
     getAllJobOrderController
 );
