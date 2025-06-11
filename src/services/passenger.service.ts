@@ -15,6 +15,7 @@ import {
 import { aggregateJobOrderRepo } from "../repositories/jobOrder.repository";
 import { findAllPassengerDocumentTypeRepo } from "../repositories/passengerDocumentType.repository";
 import {
+    aggregatePassengerDocumentMappingRepo,
     createPassengerDocumentMappingRepo,
     createPassengerJobMappingRepo,
 } from "../repositories/PassengerMappings.repository";
@@ -482,4 +483,147 @@ export const authorizedUserForPassengerStatusApprove = async (
         return true;
     }
     return false;
+};
+
+export const getPagedPassengerDocumentMappingService = async (data: any) => {
+    try {
+        const {
+            pageSize,
+            page,
+            searchQuery,
+            mappingStatus,
+            sortField = "createdAt",
+            sortOrder = "desc",
+        } = data.filters;
+
+        const skip = (page - 1) * pageSize;
+        const matchStage: any = { status: true };
+
+        if (mappingStatus) {
+            matchStage.mappingStatus = mappingStatus;
+        }
+
+        const pipeline: any[] = [];
+
+        if (Object.keys(matchStage).length > 0) {
+            pipeline.push({ $match: matchStage });
+        }
+
+        // Enrich with passenger and document type data
+        pipeline.push(
+            {
+                $lookup: {
+                    from: "passengers",
+                    localField: "passenger",
+                    foreignField: "_id",
+                    as: "passengerData",
+                },
+            },
+            {
+                $set: {
+                    passengerData: { $arrayElemAt: ["$passengerData", 0] },
+                },
+            },
+            {
+                $lookup: {
+                    from: "passenger_document_types",
+                    localField: "documents.documentType",
+                    foreignField: "_id",
+                    as: "docTypeList",
+                },
+            },
+            {
+                $set: {
+                    documents: {
+                        $map: {
+                            input: "$documents",
+                            as: "doc",
+                            in: {
+                                $mergeObjects: [
+                                    "$$doc",
+                                    {
+                                        passengerDocumentTypeData: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$docTypeList",
+                                                        as: "type",
+                                                        cond: {
+                                                            $eq: [
+                                                                "$$type._id",
+                                                                "$$doc.documentType",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+            { $unset: "docTypeList" }
+        );
+        if (searchQuery) {
+            pipeline.push({
+                $match: {
+                    $or: [
+                        {
+                            "passengerData.name": {
+                                $regex: searchQuery,
+                                $options: "i",
+                            },
+                        },
+                        {
+                            "passengerData.passengerId": {
+                                $regex: searchQuery,
+                                $options: "i",
+                            },
+                        },
+                    ],
+                },
+            });
+        }
+
+        // Sorting
+        pipeline.push({
+            $sort: {
+                [sortField]: sortOrder === "asc" ? 1 : -1,
+            },
+        });
+
+        // Pagination with metadata
+        pipeline.push(
+            {
+                $facet: {
+                    metadata: [{ $count: "total" }],
+                    data: [{ $skip: skip }, { $limit: pageSize }],
+                },
+            },
+            {
+                $unwind: {
+                    path: "$metadata",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            { $addFields: { "metadata.pageIndex": page } },
+            {
+                $project: {
+                    total: "$metadata.total",
+                    pageIndex: "$metadata.pageIndex",
+                    result: "$data",
+                },
+            }
+        );
+
+        const result = await aggregatePassengerDocumentMappingRepo(pipeline);
+        return result[0] || { total: 0, pageIndex: page, result: [] };
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
 };

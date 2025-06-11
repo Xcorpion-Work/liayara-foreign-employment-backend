@@ -5,6 +5,7 @@ import {
     createPassengerService,
     findAllPassengerDesiredJobsService,
     getOnePassengerService,
+    getPagedPassengerDocumentMappingService,
     getPagedPassengerService,
     selectJobForPassengerService,
     updatePassengerService,
@@ -149,6 +150,30 @@ export const selectJobForPassengerController = async (
             res,
             500,
             messages.PASSENGER_UPDATE_FAILED,
+            null,
+            e.message
+        );
+    }
+};
+
+export const getPagedPassengerDocumentMappingController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { body } = req;
+        const response = await getPagedPassengerDocumentMappingService(body);
+        return sendResponse(
+            res,
+            200,
+            messages.PASSENGERS_FETCH_SUCCESS,
+            response
+        );
+    } catch (e: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.PASSENGERS_FETCH_FAILED,
             null,
             e.message
         );
