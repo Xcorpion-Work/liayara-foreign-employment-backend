@@ -8,3 +8,7 @@ export const createPassengerJobMappingRepo = (data: any) => {
 export const createPassengerDocumentMappingRepo = (data: any) => {
     return new PassengerDocumentMapping(data).save();
 };
+
+export const aggregatePassengerDocumentMappingRepo = (pipeline: any) => {
+    return PassengerDocumentMapping.aggregate(pipeline).exec();
+};

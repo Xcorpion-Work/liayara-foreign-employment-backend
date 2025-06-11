@@ -4,6 +4,7 @@ import {
     getAllJobsForPassengerController,
     getOnePassengerController,
     getPagedPassengerController,
+    getPagedPassengerDocumentMappingController,
     selectJobForPassengerController,
     updatePassengerController,
 } from "../controllers/passenger.controller";
@@ -41,6 +42,11 @@ passengerRoute.post(
     "/select-job",
     authMiddleware(),
     selectJobForPassengerController
+);
+passengerRoute.post(
+    "/paged-passengers-document-phase",
+    authMiddleware(),
+    getPagedPassengerDocumentMappingController
 );
 
 export default passengerRoute;
