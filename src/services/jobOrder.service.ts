@@ -438,3 +438,55 @@ const fetchJobOrderStatus = async (issuedDate: any, expiredDate: any) => {
         throw e;
     }
 };
+
+export const updateJobVacancyService = async (
+    jobOrderId: any,
+    jobId: any,
+    action: "select" | "reject"
+) => {
+    try {
+        const jobOrder = await findOneJobOrderRepo({
+            _id: new ObjectId(jobOrderId),
+        });
+
+        if (!jobOrder) {
+            throw new Error(errors.INVALID_JOB_ORDER);
+        }
+
+        const updatedJobs = jobOrder.jobs.map((j: any) => {
+            const isMatch = j._id.toString() === jobId.toString();
+            let updatedLeftVacancies = j.leftVacancies;
+
+            if (isMatch) {
+                if (action === "select") {
+                    updatedLeftVacancies =
+                        j.leftVacancies === 0
+                            ? j.approvedVacancies
+                            : j.leftVacancies - 1;
+                } else if (action === "reject") {
+                    updatedLeftVacancies = j.leftVacancies + 1;
+                    if (updatedLeftVacancies > j.approvedVacancies) {
+                        updatedLeftVacancies = j.approvedVacancies;
+                    }
+                }
+            }
+
+            return {
+                jobCatalogId: j.jobCatalogId,
+                vacancies: j.vacancies,
+                approvedVacancies: j.approvedVacancies,
+                salary: j.salary,
+                leftVacancies: updatedLeftVacancies,
+                _id: j._id,
+            };
+        });
+
+        return await updateJobOrderRepo(
+            { _id: new ObjectId(jobOrderId) },
+            { $set: { jobs: updatedJobs } }
+        );
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};

@@ -8,33 +8,75 @@ import {
 } from "../repositories/passenger.repository";
 import { errors } from "../constants/errors";
 import mongoose from "mongoose";
+import {
+    findAllPassengerStatusRepo,
+    findPassengerStatusRepo,
+} from "../repositories/passengerStatus.repository";
+import { aggregateJobOrderRepo } from "../repositories/jobOrder.repository";
+import { findAllPassengerDocumentTypeRepo } from "../repositories/passengerDocumentType.repository";
+import {
+    createPassengerDocumentMappingRepo,
+    createPassengerJobMappingRepo,
+} from "../repositories/PassengerMappings.repository";
+import { updateJobVacancyService } from "./jobOrder.service";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-export const createPassengerService = async (data: any) => {
+export const createPassengerService = async (inputData: any) => {
     try {
-        const { nic, phone, email } = data;
-        const existingPassengersByNic = await findAllPassengerRepo({
-            nic: nic,
-        });
-        const existingPassengersByPhone = await findAllPassengerRepo({
-            phone: phone,
-        });
-        const existingPassengersByEmail = await findAllPassengerRepo({
-            email: email,
-        });
+        const { nic, phone, email } = inputData;
 
-        if (
-            (existingPassengersByNic.length > 0,
-            existingPassengersByPhone.length > 0,
-            existingPassengersByEmail.length > 0)
-        ) {
+        // Uniqueness checks
+        const existingMatches = await Promise.all([
+            findAllPassengerRepo({ nic }),
+            findAllPassengerRepo({ phone }),
+            email?.trim()
+                ? findAllPassengerRepo({ email })
+                : Promise.resolve([]),
+        ]);
+
+        const [nicMatches, phoneMatches, emailMatches] = existingMatches;
+
+        if (nicMatches.length || phoneMatches.length || emailMatches.length) {
             throw new Error(errors.PASSENGER_ALREADY_EXIST);
         }
 
-        data.passengerId = await generatePassengerId();
+        // Get the first passenger status by sequence
+        const passengerStatuses: any[] = await findAllPassengerStatusRepo({
+            status: true,
+        });
+        const firstStatus = passengerStatuses.sort(
+            (a, b) => a.sequence - b.sequence
+        )[0];
 
-        return await createPassengerRepo(data);
+        // Prepare passenger object
+        const passengerData = {
+            ...inputData,
+            passengerId: await generatePassengerId(),
+            subAgent: inputData.subAgent
+                ? new ObjectId(inputData.subAgent)
+                : null,
+            localAgent: inputData.localAgent
+                ? new ObjectId(inputData.localAgent)
+                : null,
+            desiredJobs: inputData.desiredJobs.map((j: any) => new ObjectId(j)),
+            desiredCountries: inputData.desiredCountries.map(
+                (c: any) => new ObjectId(c)
+            ),
+            covidVaccinated: inputData.covidVaccinated === "Yes",
+            abroadExperience: inputData.abroadExperience === "Yes",
+            passengerStatus: firstStatus?.code || null,
+        };
+
+        // Check if profile details are complete
+        const { height, weight, desiredJobs, desiredCountries } = passengerData;
+        passengerData.isCompletedDetails =
+            height !== 0 &&
+            weight !== 0 &&
+            desiredJobs.length > 0 &&
+            desiredCountries.length > 0;
+
+        return await createPassengerRepo(passengerData);
     } catch (e) {
         console.error(e);
         throw e;
@@ -49,8 +91,8 @@ const generatePassengerId = async () => {
             return "LP-0001";
         }
 
-        const lastId = lastAddedPassenger.localAgentId;
-        const match = lastId.match(/^LP-(\d{4})$/);
+        const lastId = lastAddedPassenger.passengerId;
+        const match = lastId?.match(/^LP-(\d{4})$/);
 
         if (!match) {
             return "LP-0001";
@@ -255,4 +297,189 @@ export const updatePassengerService = async (id: any, data: any) => {
         console.error(e);
         throw e;
     }
+};
+
+export const findAllPassengerDesiredJobsService = async (data: any) => {
+    try {
+        const { passenger } = data;
+        const existingPassenger = await findOnePassengerRepo({
+            _id: new ObjectId(passenger),
+        });
+
+        if (!existingPassenger) {
+            throw new Error(errors.INVALID_PASSENGER);
+        }
+
+        const { desiredJobs, desiredCountries } = existingPassenger;
+
+        const pipeline = [
+            {
+                $unwind: "$jobs",
+            },
+            {
+                $project: {
+                    _id: 1,
+                    jobOrderId: 1,
+                    jobOrderApprovalNumber: 1,
+                    foreignAgentId: "$foreignAgent",
+                    jobOrderStatus: 1,
+                    status: 1,
+                    jobId: "$jobs._id",
+                    jobCatalogId: "$jobs.jobCatalogId",
+                    vacancies: "$jobs.vacancies",
+                    approvedVacancies: "$jobs.approvedVacancies",
+                    salary: "$jobs.salary",
+                    leftVacancies: "$jobs.leftVacancies",
+                },
+            },
+            {
+                $lookup: {
+                    from: "foreign_agents",
+                    localField: "foreignAgentId",
+                    foreignField: "_id",
+                    as: "foreignAgentData",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$foreignAgentData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    as: "jobCatalogData",
+                    from: "job_catalogs",
+                    foreignField: "_id",
+                    localField: "jobCatalogId",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$jobCatalogData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    countryId: "$foreignAgentData.country",
+                },
+            },
+            {
+                $lookup: {
+                    as: "countryData",
+                    from: "countries",
+                    foreignField: "_id",
+                    localField: "countryId",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$countryData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $match: {
+                    countryId: { $in: desiredCountries },
+                    jobCatalogId: { $in: desiredJobs },
+                    jobOrderStatus: "ACTIVE",
+                    "jobCatalogData.gender": existingPassenger.gender,
+                },
+            },
+        ];
+
+        return await aggregateJobOrderRepo(pipeline);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const selectJobForPassengerService = async (data: any, user: any) => {
+    try {
+        const {
+            commission,
+            fee,
+            jobOrderId,
+            jobCatalogId,
+            salary,
+            jobId,
+            // selectJob,
+            passengerId,
+        } = data;
+        const passenger: any = await findOnePassengerRepo({
+            _id: new ObjectId(passengerId),
+        });
+
+        const passengerStatus: any = await findPassengerStatusRepo({
+            code: passenger.passengerStatus,
+        });
+        const isAuthorizedUser = await authorizedUserForPassengerStatusApprove(
+            user,
+            passengerStatus
+        );
+        if (!isAuthorizedUser) {
+            throw new Error(errors.UNAUTHORIZED_USER);
+        }
+        const nextApprovalLevel: any = await findPassengerStatusRepo({
+            isFinale: false,
+            sequence: passengerStatus.sequence + 1,
+        });
+        const passengerPayload = {
+            selectedJobOrderId: new ObjectId(jobOrderId),
+            selectedJobCatalogId: new ObjectId(jobCatalogId),
+            agreedCommission: commission,
+            agreedFee: fee,
+            salary: salary,
+            passengerStatus: nextApprovalLevel.code,
+        };
+        const passengerJobMappingPayload = {
+            passengerId: new ObjectId(passengerId),
+            jobOrderId: new ObjectId(jobOrderId),
+            jobCatalogId: new ObjectId(jobCatalogId),
+            agreedCommission: commission,
+            agreedFee: fee,
+            salary: salary,
+        };
+        const documentTypes = await findAllPassengerDocumentTypeRepo({});
+
+        const passengerDocumentMappingPayload = {
+            passenger: new ObjectId(passengerId),
+            documents: documentTypes.map((doc) => ({
+                documentType: doc._id,
+                name: null,
+                path: null,
+            })),
+        };
+
+        await createPassengerJobMappingRepo(passengerJobMappingPayload);
+        await createPassengerDocumentMappingRepo(
+            passengerDocumentMappingPayload
+        );
+        await updateJobVacancyService(
+            new ObjectId(jobOrderId),
+            new ObjectId(jobId),
+            "select"
+        );
+
+        return await updatePassengerRepo(
+            { _id: new ObjectId(passengerId) },
+            passengerPayload
+        );
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const authorizedUserForPassengerStatusApprove = async (
+    user: any,
+    passengerStatus: any
+) => {
+    const role = user.role._id;
+    if (passengerStatus.roles.includes(role)) {
+        return true;
+    }
+    return false;
 };

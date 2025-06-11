@@ -2,8 +2,12 @@ import { IRequest, IResponse } from "../interfaces/dto";
 import { sendResponse } from "../helpers/sendResponse";
 import { messages } from "../constants/messages";
 import {
-    createPassengerService, getOnePassengerService,
-    getPagedPassengerService, updatePassengerService,
+    createPassengerService,
+    findAllPassengerDesiredJobsService,
+    getOnePassengerService,
+    getPagedPassengerService,
+    selectJobForPassengerService,
+    updatePassengerService,
 } from "../services/passenger.service";
 
 export const createPassengerController = async (
@@ -99,6 +103,54 @@ export const updatePassengerController = async (
             messages.PASSENGER_UPDATE_FAILED,
             null,
             error.message
+        );
+    }
+};
+
+export const getAllJobsForPassengerController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const body = req.body;
+        const response = await findAllPassengerDesiredJobsService(body);
+        return sendResponse(
+            res,
+            200,
+            messages.PASSENGER_JOBS_FETCH_SUCCESS,
+            response
+        );
+    } catch (e: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.PASSENGER_JOBS_FETCH_FAILED,
+            null,
+            e.message
+        );
+    }
+};
+
+export const selectJobForPassengerController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { body, user } = req;
+        const response = await selectJobForPassengerService(body, user);
+        return sendResponse(
+            res,
+            200,
+            messages.PASSENGER_UPDATE_SUCCESS,
+            response
+        );
+    } catch (e: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.PASSENGER_UPDATE_FAILED,
+            null,
+            e.message
         );
     }
 };
