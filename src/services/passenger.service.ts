@@ -446,9 +446,9 @@ export const selectJobForPassengerService = async (data: any, user: any) => {
         const documentTypes = await findAllPassengerDocumentTypeRepo({});
 
         const passengerDocumentMappingPayload = {
-            passenger: new ObjectId(passengerId),
+            passengerId: new ObjectId(passengerId),
             documents: documentTypes.map((doc) => ({
-                documentType: doc._id,
+                documentTypeId: doc._id,
                 name: null,
                 path: null,
             })),

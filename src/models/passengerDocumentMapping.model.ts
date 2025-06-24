@@ -1,30 +1,22 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { IPassenger } from "./passenger.model";
 import { IPassengerDocumentType } from "./passengerDocumentType.model";
-import { errors } from "../constants/errors";
 import { IUser } from "./user.model";
+import { errors } from "../constants/errors";
 
 export interface IPassengerDocumentMapping extends Document {
-    passenger: mongoose.Types.ObjectId | IPassenger;
+    passengerId: IPassenger;
     documents: {
-        documentType: mongoose.Types.ObjectId | IPassengerDocumentType;
+        documentTypeId: IPassengerDocumentType;
         name: string | null;
         path: string | null;
         isVerified: boolean;
-        isRejected: boolean;
-        doneBy: mongoose.Types.ObjectId | IUser;
+        verifiedBy: IUser;
+        rejectedBy: IUser;
+        uploadedBy: IUser;
         reason: string;
-        doneAt: Date;
     }[];
-    allDocumentsSubmitted: boolean;
-    allDocumentVerified: boolean;
-    mappingStatus:
-        | "PENDING"
-        | "COMPLETED"
-        | "VERIFYING"
-        | "VERIFIED"
-        | "REJECTED";
-    reason: string;
+    mappingStatus: "PENDING" | "VERIFIED" | "REJECTED";
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -32,7 +24,7 @@ export interface IPassengerDocumentMapping extends Document {
 
 const PassengerDocumentMappingSchema = new Schema<IPassengerDocumentMapping>(
     {
-        passenger: {
+        passengerId: {
             type: Schema.Types.ObjectId,
             ref: "Passenger",
             required: [true, "Passenger is required"],
@@ -49,53 +41,47 @@ const PassengerDocumentMappingSchema = new Schema<IPassengerDocumentMapping>(
         documents: {
             type: [
                 {
-                    documentType: {
+                    documentTypeId: {
                         type: Schema.Types.ObjectId,
                         ref: "PassengerDocumentType",
                         required: true,
                     },
                     name: {
                         type: String,
+                        default: null,
                     },
                     path: {
                         type: String,
+                        default: null,
                     },
                     isVerified: {
                         type: Boolean,
                         default: false,
                     },
-                    isRejected: {
-                        type: Boolean,
-                        default: false,
-                    },
-                    doneBy: {
+                    verifiedBy: {
                         type: Schema.Types.ObjectId,
                         ref: "User",
                     },
-                    doneAt: {
-                        type: Schema.Types.Date,
+                    rejectedBy: {
+                        type: Schema.Types.ObjectId,
+                        ref: "User",
+                    },
+                    uploadedBy: {
+                        type: Schema.Types.ObjectId,
+                        ref: "User",
                     },
                     reason: {
                         type: String,
+                        default: "",
                     },
                 },
             ],
             default: [],
         },
-        allDocumentsSubmitted: {
-            type: Boolean,
-            default: false,
-        },
-        allDocumentVerified: {
-            type: Boolean,
-            default: false,
-        },
         mappingStatus: {
-            type: Schema.Types.String,
+            type: String,
+            enum: ["PENDING", "VERIFIED", "REJECTED"],
             default: "PENDING",
-        },
-        reason: {
-            type: Schema.Types.String,
         },
         status: {
             type: Boolean,
