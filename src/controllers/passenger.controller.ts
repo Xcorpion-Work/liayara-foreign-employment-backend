@@ -4,10 +4,12 @@ import { messages } from "../constants/messages";
 import {
     createPassengerService,
     findAllPassengerDesiredJobsService,
+    findPassengerDocumentViewService,
     getOnePassengerService,
     getPagedPassengerDocumentMappingService,
     getPagedPassengerService,
     selectJobForPassengerService,
+    updatePassengerDocumentService,
     updatePassengerService,
 } from "../services/passenger.service";
 
@@ -174,6 +176,55 @@ export const getPagedPassengerDocumentMappingController = async (
             res,
             500,
             messages.PASSENGERS_FETCH_FAILED,
+            null,
+            e.message
+        );
+    }
+};
+
+export const getPassengerDocumentsViewController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { id } = req.params;
+        const response = await findPassengerDocumentViewService(id);
+        return sendResponse(
+            res,
+            200,
+            messages.PASSENGER_DOCUMENT_FETCH_SUCCESS,
+            response
+        );
+    } catch (e: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.PASSENGER_DOCUMENT_FETCH_FAILED,
+            null,
+            e.message
+        );
+    }
+};
+
+export const updatePassengerDocumentsViewController = async (
+    req: IRequest,
+    res: IResponse
+): Promise<any> => {
+    try {
+        const { id } = req.params;
+        const { body, user } = req;
+        const response = await updatePassengerDocumentService(id, body, user);
+        return sendResponse(
+            res,
+            200,
+            messages.PASSENGER_DOCUMENT_UPDATE_SUCCESS,
+            response
+        );
+    } catch (e: any) {
+        return sendResponse(
+            res,
+            500,
+            messages.PASSENGER_DOCUMENT_UPDATE_FAILED,
             null,
             e.message
         );

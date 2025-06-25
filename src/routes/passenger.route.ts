@@ -5,8 +5,10 @@ import {
     getOnePassengerController,
     getPagedPassengerController,
     getPagedPassengerDocumentMappingController,
+    getPassengerDocumentsViewController,
     selectJobForPassengerController,
     updatePassengerController,
+    updatePassengerDocumentsViewController,
 } from "../controllers/passenger.controller";
 import authMiddleware from "../middlewares/auth.middleware";
 import { CREATE_PASSENGER, VIEW_PASSENGER } from "../constants/permissions";
@@ -47,6 +49,21 @@ passengerRoute.post(
     "/paged-passengers-document-phase",
     authMiddleware(),
     getPagedPassengerDocumentMappingController
+);
+passengerRoute.get(
+    "/view-passenger-documents/:id",
+    authMiddleware(),
+    getPassengerDocumentsViewController
+);
+passengerRoute.get(
+    "/view-passenger-documents/:id",
+    authMiddleware(),
+    getPassengerDocumentsViewController
+);
+passengerRoute.put(
+    "/update-passenger-documents/:id",
+    authMiddleware(),
+    updatePassengerDocumentsViewController
 );
 
 export default passengerRoute;
