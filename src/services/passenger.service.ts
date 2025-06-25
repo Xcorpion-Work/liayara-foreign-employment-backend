@@ -18,6 +18,8 @@ import {
     aggregatePassengerDocumentMappingRepo,
     createPassengerDocumentMappingRepo,
     createPassengerJobMappingRepo,
+    findOnePassengerDocumentMappingRepo,
+    updatePassengerDocumentMappingRepo,
 } from "../repositories/PassengerMappings.repository";
 import { updateJobVacancyService } from "./jobOrder.service";
 
@@ -514,7 +516,7 @@ export const getPagedPassengerDocumentMappingService = async (data: any) => {
             {
                 $lookup: {
                     from: "passengers",
-                    localField: "passenger",
+                    localField: "passengerId",
                     foreignField: "_id",
                     as: "passengerData",
                 },
@@ -527,7 +529,7 @@ export const getPagedPassengerDocumentMappingService = async (data: any) => {
             {
                 $lookup: {
                     from: "passenger_document_types",
-                    localField: "documents.documentType",
+                    localField: "documents.documentTypeId",
                     foreignField: "_id",
                     as: "docTypeList",
                 },
@@ -542,7 +544,7 @@ export const getPagedPassengerDocumentMappingService = async (data: any) => {
                                 $mergeObjects: [
                                     "$$doc",
                                     {
-                                        passengerDocumentTypeData: {
+                                        documentTypeData: {
                                             $arrayElemAt: [
                                                 {
                                                     $filter: {
@@ -551,7 +553,7 @@ export const getPagedPassengerDocumentMappingService = async (data: any) => {
                                                         cond: {
                                                             $eq: [
                                                                 "$$type._id",
-                                                                "$$doc.documentType",
+                                                                "$$doc.documentTypeId",
                                                             ],
                                                         },
                                                     },
@@ -622,6 +624,225 @@ export const getPagedPassengerDocumentMappingService = async (data: any) => {
 
         const result = await aggregatePassengerDocumentMappingRepo(pipeline);
         return result[0] || { total: 0, pageIndex: page, result: [] };
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const findPassengerDocumentViewService = async (id: any) => {
+    try {
+        const pipeline = [
+            {
+                $match: {
+                    _id: new ObjectId(id),
+                },
+            },
+            {
+                $lookup: {
+                    from: "passengers",
+                    localField: "passengerId",
+                    foreignField: "_id",
+                    as: "passengerData",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passengerData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "passenger_document_types",
+                    localField: "documents.documentTypeId",
+                    foreignField: "_id",
+                    as: "docTypeList",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "documents.uploadedBy",
+                    foreignField: "_id",
+                    as: "uploadedByList",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "documents.verifiedBy",
+                    foreignField: "_id",
+                    as: "verifiedByList",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "documents.rejectedBy",
+                    foreignField: "_id",
+                    as: "rejectedByList",
+                },
+            },
+            {
+                $set: {
+                    documents: {
+                        $map: {
+                            input: "$documents",
+                            as: "doc",
+                            in: {
+                                $mergeObjects: [
+                                    "$$doc",
+                                    {
+                                        documentTypeData: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$docTypeList",
+                                                        as: "type",
+                                                        cond: {
+                                                            $eq: [
+                                                                "$$type._id",
+                                                                "$$doc.documentTypeId",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        uploadedByData: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$uploadedByList",
+                                                        as: "user",
+                                                        cond: {
+                                                            $eq: [
+                                                                "$$user._id",
+                                                                "$$doc.uploadedBy",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        verifiedByData: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$verifiedByList",
+                                                        as: "user",
+                                                        cond: {
+                                                            $eq: [
+                                                                "$$user._id",
+                                                                "$$doc.verifiedBy",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        rejectedByData: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$rejectedByList",
+                                                        as: "user",
+                                                        cond: {
+                                                            $eq: [
+                                                                "$$user._id",
+                                                                "$$doc.rejectedBy",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $unset: [
+                    "docTypeList",
+                    "uploadedByList",
+                    "verifiedByList",
+                    "rejectedByList",
+                ],
+            },
+        ];
+
+        const response = await aggregatePassengerDocumentMappingRepo(pipeline);
+        return response[0];
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+export const updatePassengerDocumentService = async (
+    id: any,
+    data: any,
+    user: any
+) => {
+    try {
+        const exist: any = await findOnePassengerDocumentMappingRepo({
+            _id: new ObjectId(id),
+        });
+
+        const { documentTypeId, isVerified, isRejected, reason } = data;
+
+        const docTypeIdStr = new ObjectId(documentTypeId).toString();
+        let updated = false;
+
+        exist.documents = exist.documents.map((doc: any) => {
+            if (doc.documentTypeId.toString() === docTypeIdStr) {
+                updated = true;
+                return {
+                    ...doc,
+                    isVerified: !!isVerified,
+                    isRejected: !!isRejected,
+                    reason: isRejected ? reason : undefined,
+                    verifiedBy: isVerified ? user._id : undefined,
+                    rejectedBy: isRejected ? user._id : undefined,
+                };
+            }
+            return doc;
+        });
+
+        if (!updated) {
+            console.warn(
+                `No document found matching documentTypeId: ${documentTypeId}`
+            );
+        }
+
+        // Update mapping status based on documents array
+        if (exist.documents.every((doc: any) => doc.isVerified)) {
+            exist.mappingStatus = "VERIFIED";
+            exist.reason = undefined;
+        } else if (exist.documents.some((doc: any) => doc.isRejected)) {
+            exist.mappingStatus = "REJECTED";
+            exist.reason = reason;
+        } else {
+            exist.mappingStatus = "PENDING";
+            exist.reason = undefined;
+        }
+
+        // Persist the updated document
+        await updatePassengerDocumentMappingRepo(
+            { _id: new ObjectId(id) },
+            exist
+        );
+
+        // Return updated view object
+        return await findPassengerDocumentViewService(id);
     } catch (e) {
         console.error(e);
         throw e;

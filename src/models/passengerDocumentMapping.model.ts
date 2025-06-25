@@ -11,6 +11,7 @@ export interface IPassengerDocumentMapping extends Document {
         name: string | null;
         path: string | null;
         isVerified: boolean;
+        isRejected: boolean;
         verifiedBy: IUser;
         rejectedBy: IUser;
         uploadedBy: IUser;
@@ -55,6 +56,10 @@ const PassengerDocumentMappingSchema = new Schema<IPassengerDocumentMapping>(
                         default: null,
                     },
                     isVerified: {
+                        type: Boolean,
+                        default: false,
+                    },
+                    isRejected: {
                         type: Boolean,
                         default: false,
                     },
