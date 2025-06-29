@@ -829,7 +829,7 @@ export const updatePassengerDocumentService = async (
             exist.reason = undefined;
         } else if (exist.documents.some((doc: any) => doc.isRejected)) {
             exist.mappingStatus = "REJECTED";
-            exist.reason = reason;
+            // exist.reason = reason;
         } else {
             exist.mappingStatus = "PENDING";
             exist.reason = undefined;
